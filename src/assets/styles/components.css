@@ -198,6 +198,24 @@
   gap: var(--space-2);
 }
 
+.candidate-list-avatar {
+  display: block;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+.candidate-list-initials {
+  display: grid;
+  place-items: center;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
 /* Filter Layout */
 .section-banner {
   position: relative;
