@@ -6,6 +6,7 @@ import { t } from '../../utils/i18n.js';
 export function openCandidatoForm({ item = null, onSave }) {
   const isEdit = !!item;
   const title = isEdit ? t('candidatos.edit') : t('candidatos.new');
+  const companyValue = typeof item?.company === 'string' ? item.company : item?.company?.name || '';
 
   const bodyHTML = `
     <form id="candidato-form">
@@ -32,7 +33,7 @@ export function openCandidatoForm({ item = null, onSave }) {
 
       <div class="form-group">
         <label for="company" data-i18n="candidatos.form.company">Empresa Actual</label>
-        <input type="text" id="company" class="input" value="${item && item.company ? item.company.name || '' : ''}" />
+        <input type="text" id="company" class="input" value="${companyValue}" />
       </div>
     </form>
   `;
@@ -54,6 +55,7 @@ export function openCandidatoForm({ item = null, onSave }) {
     e.preventDefault();
 
     const payload = {
+      ...(item || {}),
       firstName: overlay.querySelector('#firstName').value.trim(),
       lastName: overlay.querySelector('#lastName').value.trim(),
       email: overlay.querySelector('#email').value.trim(),

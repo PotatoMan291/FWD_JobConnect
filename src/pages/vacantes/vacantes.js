@@ -7,13 +7,12 @@ import { renderAccessibilityMenu } from '../../components/accessibility-menu.js'
 import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 import { createFilterLayout } from '../../components/filter-layout.js';
-import { renderTable } from '../../components/table.js';
 import { renderPagination } from '../../components/pagination.js';
 import { vacantesService } from '../../services/vacantes-service.js';
 import { openVacanteForm } from './vacantes-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
-import { formatId, formatCurrency } from '../../utils/format.js';
+import { renderJobCatalog } from '../../components/job-catalog.js';
 
 initTheme();
 initAccessibility();
@@ -35,7 +34,7 @@ if (mobileBtn) {
 }
 
 const filterContainer = document.getElementById('filter-container');
-const tableContainer = document.getElementById('table-container');
+const catalogContainer = document.getElementById('job-catalog-container');
 const paginationContainer = document.getElementById('pagination-container');
 const createBtn = document.getElementById('create-vacante-btn');
 
@@ -45,7 +44,7 @@ let currentSearch = '';
 let currentFilters = {};
 
 async function loadData() {
-  renderTable({ container: tableContainer, columns: [], isLoading: true });
+  renderJobCatalog({ container: catalogContainer, isLoading: true });
 
   const res = await vacantesService.getAll({
     cursor: currentCursor,
@@ -55,29 +54,17 @@ async function loadData() {
   });
 
   if (!res.ok) {
-    renderTable({ container: tableContainer, error: res.message });
+    renderJobCatalog({ container: catalogContainer, error: res.message, onRetry: loadData });
     paginationContainer.innerHTML = '';
     return;
   }
 
-  const columns = [
-    { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#VAC-') },
-    { key: 'title', headerKey: 'vacantes.form.title', render: (val) => `<strong>${val}</strong>` },
-    { key: 'category', headerKey: 'vacantes.form.category', render: (val) => `<span class="badge badge-neutral">${val}</span>` },
-    { key: 'price', headerKey: 'vacantes.form.price', isMono: true, render: (val) => formatCurrency(val * 100) },
-    { key: 'stock', headerKey: 'vacantes.form.stock', isMono: true, render: (val) => `<span class="badge badge-active">${val} Plazas</span>` }
-  ];
-
-  renderTable({
-    container: tableContainer,
-    columns,
-    data: res.data,
-    onEdit: (id, item) => {
-      openVacanteForm({ item, onSave: loadData });
-    },
-    onDelete: (id, item) => {
-      openDeleteConfirmation(id, item);
-    }
+  renderJobCatalog({
+    container: catalogContainer,
+    jobs: res.data,
+    onEdit: item => openVacanteForm({ item, onSave: loadData }),
+    onDelete: item => openDeleteConfirmation(item.id, item),
+    emptyMessage: 'No hay vacantes que coincidan con la búsqueda.'
   });
 
   renderPagination({
