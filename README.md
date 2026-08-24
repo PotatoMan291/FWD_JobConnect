@@ -1,6 +1,7 @@
 # JobConnect — Plataforma de Gestión de Talento & Reclutamiento
 
-https://trello.com/invite/b/6a8c704a6dd01d94771e59d6/ATTI02f0ba902b3c38d717911b7365aca21195E1C4B4/jobconnect-plan-de-trabajo
+https://trello.com/invite/b/6a8c704a6dd01d94771e59d6/ATTI02f0ba902b3c38d717911b7365aca21195E1C4B4/jobconnect-plan-de-trabajo 
+
 Panel de administración frontend para una empresa de empleabilidad y consultoría de talento humano executive. Construido con **HTML5, CSS3 Vanilla y JavaScript Módulos (ES Modules)**, consumiendo la API pública [DummyJSON](https://dummyjson.com) mediante `fetch` nativo sobre **Vite** y **pnpm**.
 
 ---
