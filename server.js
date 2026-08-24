@@ -41,16 +41,16 @@ const USERS_DB = [
 
 // Seed data para Candidatos (/api/users)
 let candidatos = [
-  { id: 1, firstName: 'Emily', lastName: 'Johnson', email: 'emily.johnson@x.dummyjson.com', phone: '+1 555-0192', company: { name: 'Tech Talent Inc.' }, role: 'Directora HR' },
-  { id: 2, firstName: 'Michael', lastName: 'Williams', email: 'michael.williams@x.dummyjson.com', phone: '+1 555-0183', company: { name: 'Global Executive Search' }, role: 'Consultor Senior' },
-  { id: 3, firstName: 'Sophia', lastName: 'Brown', email: 'sophia.brown@x.dummyjson.com', phone: '+1 555-0174', company: { name: 'Talent Solutions Corp' }, role: 'Reclutadora Lead' },
-  { id: 4, firstName: 'James', lastName: 'Davis', email: 'james.davis@x.dummyjson.com', phone: '+1 555-0165', company: { name: 'Innovate HR' }, role: 'Headhunter IT' },
-  { id: 5, firstName: 'Olivia', lastName: 'Wilson', email: 'olivia.wilson@x.dummyjson.com', phone: '+1 555-0156', company: { name: 'Nexus Placement' }, role: 'Especialista Selección' },
-  { id: 6, firstName: 'Carlos', lastName: 'Mendoza', email: 'carlos.mendoza@jobconnect.com', phone: '+52 55-4123-9800', company: { name: 'Fintech Latam' }, role: 'Senior Developer' },
-  { id: 7, firstName: 'Ana', lastName: 'Gutiérrez', email: 'ana.gutierrez@jobconnect.com', phone: '+34 91-882-9100', company: { name: 'Iberia Tech' }, role: 'Lead UX Designer' },
-  { id: 8, firstName: 'David', lastName: 'Torres', email: 'david.torres@jobconnect.com', phone: '+1 305-991-0022', company: { name: 'Miami Data Systems' }, role: 'Data Engineer' },
-  { id: 9, firstName: 'Laura', lastName: 'Ramos', email: 'laura.ramos@jobconnect.com', phone: '+54 11-4821-3300', company: { name: 'Buenos Aires Cloud' }, role: 'DevOps Architect' },
-  { id: 10, firstName: 'Roberto', lastName: 'Silva', email: 'roberto.silva@jobconnect.com', phone: '+55 11-9988-1122', company: { name: 'Brasil Code Labs' }, role: 'Product Owner' }
+  { id: 1, firstName: 'Emily', lastName: 'Johnson', email: 'emily.johnson@x.dummyjson.com', phone: '+1 555-0192', company: { name: 'Tech Talent Inc.' }, role: 'Directora HR', image: 'https://dummyjson.com/icon/emilys/128' },
+  { id: 2, firstName: 'Michael', lastName: 'Williams', email: 'michael.williams@x.dummyjson.com', phone: '+1 555-0183', company: { name: 'Global Executive Search' }, role: 'Consultor Senior', image: 'https://dummyjson.com/icon/michaelw/128' },
+  { id: 3, firstName: 'Sophia', lastName: 'Brown', email: 'sophia.brown@x.dummyjson.com', phone: '+1 555-0174', company: { name: 'Talent Solutions Corp' }, role: 'Reclutadora Lead', image: 'https://dummyjson.com/icon/sophiab/128' },
+  { id: 4, firstName: 'James', lastName: 'Davis', email: 'james.davis@x.dummyjson.com', phone: '+1 555-0165', company: { name: 'Innovate HR' }, role: 'Headhunter IT', image: 'https://dummyjson.com/icon/jamesd/128' },
+  { id: 5, firstName: 'Olivia', lastName: 'Wilson', email: 'olivia.wilson@x.dummyjson.com', phone: '+1 555-0156', company: { name: 'Nexus Placement' }, role: 'Especialista Selección', image: 'https://dummyjson.com/icon/oliviaw/128' },
+  { id: 6, firstName: 'Carlos', lastName: 'Mendoza', email: 'carlos.mendoza@jobconnect.com', phone: '+52 55-4123-9800', company: { name: 'Fintech Latam' }, role: 'Senior Developer', image: 'https://randomuser.me/api/portraits/men/32.jpg' },
+  { id: 7, firstName: 'Ana', lastName: 'Gutiérrez', email: 'ana.gutierrez@jobconnect.com', phone: '+34 91-882-9100', company: { name: 'Iberia Tech' }, role: 'Lead UX Designer', image: 'https://randomuser.me/api/portraits/women/44.jpg' },
+  { id: 8, firstName: 'David', lastName: 'Torres', email: 'david.torres@jobconnect.com', phone: '+1 305-991-0022', company: { name: 'Miami Data Systems' }, role: 'Data Engineer', image: 'https://randomuser.me/api/portraits/men/46.jpg' },
+  { id: 9, firstName: 'Laura', lastName: 'Ramos', email: 'laura.ramos@jobconnect.com', phone: '+54 11-4821-3300', company: { name: 'Buenos Aires Cloud' }, role: 'DevOps Architect', image: 'https://randomuser.me/api/portraits/women/65.jpg' },
+  { id: 10, firstName: 'Roberto', lastName: 'Silva', email: 'roberto.silva@jobconnect.com', phone: '+55 11-9988-1122', company: { name: 'Brasil Code Labs' }, role: 'Product Owner', image: 'https://randomuser.me/api/portraits/men/75.jpg' }
 ];
 
 // Seed data para Vacantes (/api/products)

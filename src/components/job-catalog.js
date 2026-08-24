@@ -18,6 +18,11 @@ function initials(name) {
   return name.split(' ').filter(Boolean).slice(0, 2).map(word => word[0]).join('').toUpperCase() || 'JC';
 }
 
+function companyLogoMarkup(job) {
+  const logoUrl = job.companyLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.companyName)}&background=1f5c4f&color=ffffff&size=128&bold=true`;
+  return `<img class="job-card-logo-image" src="${escapeHTML(logoUrl)}" alt="Logo de ${escapeHTML(job.companyName)}" data-fallback-src="${FALLBACK_IMAGE}">`;
+}
+
 function savedJobIds() {
   const ids = storage.get(SAVED_JOBS_KEY, []);
   return Array.isArray(ids) ? ids.map(String) : [];
@@ -61,9 +66,7 @@ export function renderJobCard(rawJob, { showManageActions = false } = {}) {
   jobsCache.set(String(job.id), job);
   const saved = isSaved(job);
   const imageSrc = job.companyImage || FALLBACK_IMAGE;
-  const logo = job.companyLogo
-    ? `<img class="job-card-logo-image" src="${escapeHTML(job.companyLogo)}" alt="Logo de ${escapeHTML(job.companyName)}" data-fallback-src="${FALLBACK_IMAGE}">`
-    : `<span class="job-card-logo-initials" aria-hidden="true">${escapeHTML(initials(job.companyName))}</span>`;
+  const logo = companyLogoMarkup(job);
 
   return `
     <article class="job-card" tabindex="0" data-job-id="${escapeHTML(job.id)}" aria-label="Ver detalles de ${escapeHTML(job.title)} en ${escapeHTML(job.companyName)}">
@@ -193,7 +196,7 @@ export async function openJobDetails(jobId) {
 
   const renderDetails = job => {
     body.innerHTML = `
-      <div class="job-details-header"><div class="job-card-logo">${escapeHTML(initials(job.companyName))}</div><div><p class="job-card-company">${escapeHTML(job.companyName)}</p><h3>${escapeHTML(job.title)}</h3><p class="job-card-salary">${escapeHTML(formatSalary(job))}</p></div></div>
+      <div class="job-details-header"><div class="job-card-logo">${companyLogoMarkup(job)}</div><div><p class="job-card-company">${escapeHTML(job.companyName)}</p><h3>${escapeHTML(job.title)}</h3><p class="job-card-salary">${escapeHTML(formatSalary(job))}</p></div></div>
       <div class="job-details-meta"><span>${escapeHTML(job.location)}</span><span>${escapeHTML(job.modality)}</span><span>${escapeHTML(job.contractType)}</span><span>Cierre: ${escapeHTML(formatDate(job.closingDate))}</span></div>
       <section><h4>Descripción</h4><p>${escapeHTML(job.description)}</p></section>
       <section><h4>Responsabilidades</h4>${listMarkup(job.responsibilities, 'Responsabilidades no disponibles.')}</section>
