@@ -216,7 +216,7 @@ Para accesibilidad y legibilidad en pantallas con reflejo o usuarios con baja vi
 Ambos controles (`theme-switcher.js`, `language-switcher.js`) viven juntos en el extremo derecho del header, como iconos pequeños de 32×32px con `--radius-sm`, separados por un divisor vertical fino de `--color-border`:
 
 ```
-[ ☀ Tema ▾ ]  |  [ ES ▾ ]
+[ Tema ▾ ]  |  [ ES ▾ ]
 ```
 
 - El selector de tema despliega 4 puntos de color (uno por tema) con su nombre al lado, no un dropdown de texto plano.

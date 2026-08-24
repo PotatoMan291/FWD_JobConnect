@@ -1,6 +1,6 @@
 import { storage } from '../utils/storage.js';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://dummyjson.com';
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) || '/api';
 
 export async function httpClient(endpoint, options = {}) {
   const session = storage.get('session');
