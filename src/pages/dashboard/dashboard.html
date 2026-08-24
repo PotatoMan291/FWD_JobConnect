@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobConnect — Panel General</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/src/assets/styles/tokens.css">
+  <link rel="stylesheet" href="/src/assets/styles/base.css">
+  <link rel="stylesheet" href="/src/assets/styles/components.css">
+  <link rel="stylesheet" href="/src/assets/styles/layout.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside id="menu"></aside>
+
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+          <button id="mobile-menu-btn" class="mobile-menu-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-title-wrapper">
+            <h2 class="header-title" data-i18n="dashboard.title">Panel de Control Operativo</h2>
+            <span class="header-subtitle" data-i18n="dashboard.subtitle">Resumen ejecutivo de actividad, vacantes activas y métricas de contratación</span>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <div id="theme-switcher-container"></div>
+          <div id="lang-switcher-container"></div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <!-- Dashboard Grid Cards -->
+        <div class="dashboard-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="dashboard.metric.candidatos">Candidatos Registrados</span>
+            </div>
+            <div class="metric-value" id="count-candidatos"><span class="skeleton" style="width: 60px; height: 32px;"></span></div>
+            <div class="metric-footer">En base de datos general</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="dashboard.metric.vacantes">Vacantes Disponibles</span>
+            </div>
+            <div class="metric-value" id="count-vacantes"><span class="skeleton" style="width: 60px; height: 32px;"></span></div>
+            <div class="metric-footer">Requerimientos corporativos activos</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="dashboard.metric.empresas">Empresas Asociadas</span>
+            </div>
+            <div class="metric-value" id="count-empresas"><span class="skeleton" style="width: 60px; height: 32px;"></span></div>
+            <div class="metric-footer">Cuentas corporativas activas</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="dashboard.metric.postulaciones">Postulaciones Totales</span>
+            </div>
+            <div class="metric-value" id="count-postulaciones"><span class="skeleton" style="width: 60px; height: 32px;"></span></div>
+            <div class="metric-footer">Evaluaciones y propuestas enviadas</div>
+          </div>
+        </div>
+
+        <!-- Recent Tables Section -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-6);">
+          <div>
+            <h3 style="font-size: 1.1rem; margin-bottom: var(--space-3);" data-i18n="dashboard.recent.candidatos">Últimos Candidatos Evaluados</h3>
+            <div id="recent-candidatos-table"></div>
+          </div>
+
+          <div>
+            <h3 style="font-size: 1.1rem; margin-bottom: var(--space-3);" data-i18n="dashboard.recent.vacantes">Vacantes Requeridas Recientemente</h3>
+            <div id="recent-vacantes-table"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="./dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobConnect — Candidatos</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/src/assets/styles/tokens.css">
+  <link rel="stylesheet" href="/src/assets/styles/base.css">
+  <link rel="stylesheet" href="/src/assets/styles/components.css">
+  <link rel="stylesheet" href="/src/assets/styles/layout.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside id="menu"></aside>
+
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+          <button id="mobile-menu-btn" class="mobile-menu-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-title-wrapper">
+            <h2 class="header-title" data-i18n="candidatos.title">Gestión de Candidatos</h2>
+            <span class="header-subtitle" data-i18n="candidatos.subtitle">Directorio de talentos, perfiles profesionales y datos de contacto</span>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <button id="create-candidato-btn" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span data-i18n="candidatos.new">Nuevo Candidato</span>
+          </button>
+          <div id="theme-switcher-container"></div>
+          <div id="lang-switcher-container"></div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div id="filter-container"></div>
+        <div id="table-container"></div>
+        <div id="pagination-container"></div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="./candidatos.js"></script>
+</body>
+</html>

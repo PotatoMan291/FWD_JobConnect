@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobConnect — Redirigiendo...</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <script>
+    (function() {
+      try {
+        const session = localStorage.getItem('jobconnect_session');
+        if (session) {
+          const parsed = JSON.parse(session);
+          if (parsed && parsed.token) {
+            window.location.replace('/src/pages/dashboard/dashboard.html');
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      window.location.replace('/src/pages/login/login.html');
+    })();
+  </script>
+</head>
+<body style="background: #F6F4EF; color: #1F1B16; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+  <p style="font-size: 0.9rem; color: #6B6355;">Cargando JobConnect...</p>
+</body>
+</html>

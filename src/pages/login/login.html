@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobConnect — Iniciar Sesión</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/src/assets/styles/tokens.css">
+  <link rel="stylesheet" href="/src/assets/styles/base.css">
+  <link rel="stylesheet" href="/src/assets/styles/components.css">
+  <link rel="stylesheet" href="/src/assets/styles/layout.css">
+</head>
+<body>
+  <div class="login-container">
+    <!-- Panel Izquierdo: Editorial Brand Panel -->
+    <div class="login-brand-panel">
+      <div class="login-brand-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="36" height="36">
+          <rect width="32" height="32" rx="6" fill="#FFFFFF"/>
+          <path d="M10 12V10C10 8.89543 10.8954 8 12 8H20C21.1046 8 22 8.89543 22 10V12H24C25.1046 12 26 12.8954 26 14V22C26 23.1046 25.1046 24 24 24H8C6.89543 24 6 23.1046 6 22V14C6 12.8954 6.89543 12 8 12H10ZM12 10V12H20V10H12Z" fill="var(--color-accent)"/>
+        </svg>
+        <span data-i18n="brand.title">JobConnect</span>
+      </div>
+
+      <div class="login-hero-text">
+        <h1 data-i18n="login.hero.title">Gestión estratégica de talento humano con precisión editorial</h1>
+        <p data-i18n="login.hero.subtitle">Plataforma integral de administración para reclutamiento ejecutivo, evaluación de perfiles y seguimiento de ofertas laborales.</p>
+      </div>
+
+      <div style="font-size: 0.8rem; opacity: 0.8;">
+        © 2026 JobConnect Executive Consultancy. Todos los derechos reservados.
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Formulario de Login -->
+    <div class="login-form-panel">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: var(--space-5);">
+        <div class="header-controls">
+          <div id="theme-switcher-container"></div>
+          <div id="lang-switcher-container"></div>
+        </div>
+      </div>
+
+      <div class="login-form-card">
+        <h2 class="login-title" data-i18n="login.title">Iniciar sesión</h2>
+        <p class="login-subtitle" data-i18n="login.subtitle">Ingresa tus credenciales de consultor para gestionar talento</p>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username" data-i18n="login.username">Usuario</label>
+            <input type="text" id="username" class="input" value="emilys" required placeholder="emilys" />
+          </div>
+
+          <div class="form-group">
+            <label for="password" data-i18n="login.password">Contraseña</label>
+            <input type="password" id="password" class="input" value="emilyspass" required placeholder="••••••••" />
+          </div>
+
+          <div id="login-error" style="display: none; color: var(--color-error); font-size: var(--fs-small); margin-bottom: var(--space-3);" data-i18n="login.error">
+            Credenciales inválidas. Por favor intente con emilys / emilyspass
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: var(--space-3);">
+            <span data-i18n="login.submit">Iniciar sesión</span>
+          </button>
+        </form>
+
+        <!-- Credenciales de Demo por Rol -->
+        <div style="margin-top: var(--space-5); padding: var(--space-3); background: var(--color-surface-alt); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+          <div style="font-size: 0.75rem; font-weight: 600; color: var(--color-ink-muted); margin-bottom: var(--space-2); text-align: center;">
+            ⚡ Clic rápido para probar por Rol (Demo):
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <button class="btn btn-secondary demo-cred-btn" data-user="emilys" data-pass="emilyspass" style="justify-content: space-between; font-size: 0.8rem; padding: 6px 12px;">
+              <span>👑 <strong>Admin</strong> (Emily Johnson)</span>
+              <span class="mono" style="opacity: 0.7;">emilys</span>
+            </button>
+            <button class="btn btn-secondary demo-cred-btn" data-user="sophiab" data-pass="sophiabpass" style="justify-content: space-between; font-size: 0.8rem; padding: 6px 12px;">
+              <span>💼 <strong>Reclutador</strong> (Sophia Brown)</span>
+              <span class="mono" style="opacity: 0.7;">sophiab</span>
+            </button>
+            <button class="btn btn-secondary demo-cred-btn" data-user="oliviaw" data-pass="oliviawpass" style="justify-content: space-between; font-size: 0.8rem; padding: 6px 12px;">
+              <span>👤 <strong>Usuario</strong> (Olivia Wilson)</span>
+              <span class="mono" style="opacity: 0.7;">oliviaw</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./login.js"></script>
+</body>
+</html>
