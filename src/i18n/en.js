@@ -29,8 +29,13 @@ export default {
   "dashboard.metric.vacantes": "Open Positions",
   "dashboard.metric.empresas": "Partner Companies",
   "dashboard.metric.postulaciones": "Total Applications",
-  "dashboard.recent.candidatos": "Recently Evaluated Candidates",
-  "dashboard.recent.vacantes": "Recently Posted Vacancies",
+  "dashboard.recent.candidatos": "Last Candidates Evaluated",
+  "dashboard.recent.vacantes": "Recently Requested Jobs",
+  "dashboard.table.candidato.role": "Role/Position",
+  "dashboard.table.vacante.title": "Job Title",
+  "dashboard.table.vacante.salary": "Salary Range",
+  "dashboard.table.vacante.area": "Area",
+  "role.candidate": "Candidate",
 
   "candidatos.title": "Candidate Management",
   "candidatos.subtitle": "Talent directory, professional profiles, and contact details",
@@ -57,6 +62,7 @@ export default {
   "empresas.edit": "Edit Company",
   "empresas.form.total": "Contract Value",
   "empresas.form.quantity": "Total Contracts",
+  "empresas.form.userid": "Admin User ID (Consultant)",
 
   "postulaciones.title": "Applications & Posts",
   "postulaciones.subtitle": "Profile evaluation, job posting publications, and candidate feedback",
@@ -70,6 +76,8 @@ export default {
   "entrevistas.new": "New Interview",
   "entrevistas.edit": "Edit Interview",
   "entrevistas.form.body": "Interview Comments",
+  "entrevistas.form.postid": "Associated Application ID",
+  "entrevistas.form.userid": "Interviewer ID",
 
   "tareas.title": "Tasks & Follow-up",
   "tareas.subtitle": "Operational task list and pending hiring activities",
@@ -77,6 +85,8 @@ export default {
   "tareas.edit": "Edit Task",
   "tareas.form.todo": "Task Description",
   "tareas.form.completed": "Completion Status",
+  "tareas.form.pending": "Pending / In Progress",
+  "tareas.form.done": "Completed",
 
   "table.id": "ID",
   "table.name": "Name / Title",
@@ -101,6 +111,9 @@ export default {
   "modal.delete.title": "Confirm Deletion",
   "modal.delete.confirm": "Are you sure you want to delete this record? This action cannot be undone.",
   "modal.delete.submit": "Yes, Delete",
+
+  "action.edit": "Edit",
+  "action.delete": "Delete",
 
   "toast.create.success": "Record created successfully",
   "toast.update.success": "Record updated successfully",

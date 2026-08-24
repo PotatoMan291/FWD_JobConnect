@@ -10,12 +10,12 @@ export function openPostulacionForm({ item = null, onSave }) {
   const bodyHTML = `
     <form id="postulacion-form">
       <div class="form-group">
-        <label for="title" data-i18n="postulaciones.form.title">Título / Resumen de la Postulación</label>
+        <label for="title" data-i18n="postulaciones.form.title">${t('postulaciones.form.title')}</label>
         <input type="text" id="title" class="input" value="${item ? item.title || '' : ''}" required />
       </div>
 
       <div class="form-group">
-        <label for="body" data-i18n="postulaciones.form.body">Detalle del Perfil / Notas</label>
+        <label for="body" data-i18n="postulaciones.form.body">${t('postulaciones.form.body')}</label>
         <textarea id="body" class="textarea" rows="4" required>${item ? item.body || '' : ''}</textarea>
       </div>
     </form>

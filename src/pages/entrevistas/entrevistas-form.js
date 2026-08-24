@@ -10,17 +10,17 @@ export function openEntrevistaForm({ item = null, onSave }) {
   const bodyHTML = `
     <form id="entrevista-form">
       <div class="form-group">
-        <label for="body" data-i18n="entrevistas.form.body">Comentarios / Feedback de la Entrevista</label>
+        <label for="body" data-i18n="entrevistas.form.body">${t('entrevistas.form.body')}</label>
         <textarea id="body" class="textarea" rows="4" required>${item ? item.body || '' : ''}</textarea>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
         <div class="form-group">
-          <label for="postId">ID de Postulación Asociada</label>
+          <label for="postId" data-i18n="entrevistas.form.postid">${t('entrevistas.form.postid')}</label>
           <input type="number" id="postId" class="input" value="${item ? item.postId || '1' : '1'}" required />
         </div>
         <div class="form-group">
-          <label for="userId">ID de Entrevistador</label>
+          <label for="userId" data-i18n="entrevistas.form.userid">${t('entrevistas.form.userid')}</label>
           <input type="number" id="userId" class="input" value="${item && item.user ? item.user.id || '1' : '1'}" required />
         </div>
       </div>

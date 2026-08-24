@@ -1,6 +1,6 @@
 import '../../guards/auth-guard.js';
 import { initTheme } from '../../utils/theme.js';
-import { initI18n } from '../../utils/i18n.js';
+import { initI18n, t } from '../../utils/i18n.js';
 import { renderMenu } from '../../components/menu.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
@@ -48,10 +48,10 @@ async function loadDashboardData() {
   renderTable({
     container: document.getElementById('recent-candidatos-table'),
     columns: [
-      { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id) },
-      { key: 'firstName', header: 'Nombre', render: (val, row) => `${row.firstName} ${row.lastName}` },
-      { key: 'email', header: 'Correo' },
-      { key: 'role', header: 'Rol/Posición', render: (val) => `<span class="badge badge-active">${val || 'Candidato'}</span>` }
+      { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id) },
+      { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `${row.firstName} ${row.lastName}` },
+      { key: 'email', headerKey: 'candidatos.form.email' },
+      { key: 'role', headerKey: 'dashboard.table.candidato.role', render: (val) => `<span class="badge badge-active">${val || t('role.candidate')}</span>` }
     ],
     data: candidatosRes.data || [],
     isLoading: false,
@@ -62,10 +62,10 @@ async function loadDashboardData() {
   renderTable({
     container: document.getElementById('recent-vacantes-table'),
     columns: [
-      { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id, '#VAC-') },
-      { key: 'title', header: 'Vacante' },
-      { key: 'price', header: 'Rango Salarial', isMono: true, render: (val) => formatCurrency(val * 100) },
-      { key: 'category', header: 'Área', render: (val) => `<span class="badge badge-neutral">${val}</span>` }
+      { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#VAC-') },
+      { key: 'title', headerKey: 'dashboard.table.vacante.title' },
+      { key: 'price', headerKey: 'dashboard.table.vacante.salary', isMono: true, render: (val) => formatCurrency(val * 100) },
+      { key: 'category', headerKey: 'dashboard.table.vacante.area', render: (val) => `<span class="badge badge-neutral">${val}</span>` }
     ],
     data: vacantesRes.data || [],
     isLoading: false,
