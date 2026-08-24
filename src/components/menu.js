@@ -58,6 +58,20 @@ export function renderMenu(container, currentUser = null) {
   container.innerHTML = html;
   container.classList.add('sidebar');
 
+  container.querySelectorAll('.nav-item, .brand-logo').forEach(link => {
+    link.addEventListener('click', () => container.classList.remove('open'));
+  });
+
+  if (!container.dataset.outsideClickBound) {
+    document.addEventListener('click', event => {
+      if (!container.classList.contains('open')) return;
+      if (!event.target.closest('#menu, #mobile-menu-btn')) {
+        container.classList.remove('open');
+      }
+    });
+    container.dataset.outsideClickBound = 'true';
+  }
+
   const logoutBtn = container.querySelector('#logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => authService.logout());
