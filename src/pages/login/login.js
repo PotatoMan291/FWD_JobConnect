@@ -11,9 +11,18 @@ initTheme();
 initAccessibility();
 initI18n();
 
-// Si ya está autenticado, redirigir al dashboard
+function redirectByUserRole(user) {
+  const role = user ? user.role : 'user';
+  if (role === 'user') {
+    window.location.href = '/src/pages/vacantes/vacantes.html';
+  } else {
+    window.location.href = '/src/pages/dashboard/dashboard.html';
+  }
+}
+
+// Si ya está autenticado, redirigir según su rol
 if (authService.isAuthenticated()) {
-  window.location.href = '/src/pages/dashboard/dashboard.html';
+  redirectByUserRole(authService.getCurrentUser());
 }
 
 const themeContainer = document.getElementById('theme-switcher-container');
@@ -44,7 +53,7 @@ loginForm.addEventListener('submit', async (e) => {
   const res = await authService.login(username, password);
 
   if (res.ok) {
-    window.location.href = '/src/pages/dashboard/dashboard.html';
+    redirectByUserRole(res.user);
   } else {
     errorDiv.style.display = 'block';
     submitBtn.disabled = false;
@@ -60,8 +69,7 @@ document.querySelectorAll('.demo-cred-btn').forEach(btn => {
     const pass = btn.getAttribute('data-pass');
     usernameInput.value = user;
     passwordInput.value = pass;
-    // Opcional: auto enviar formulario
+    // Auto enviar formulario
     loginForm.dispatchEvent(new Event('submit'));
   });
 });
-
