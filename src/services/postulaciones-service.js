@@ -47,18 +47,20 @@ export const postulacionesService = {
       method: 'POST',
       body: JSON.stringify(payload)
     });
-    const createdObj = (res.ok && res.data) ? res.data : payload;
-    const item = addDemoItem('postulaciones', createdObj);
-    return { ok: true, data: item };
+    if (res.ok && res.data) {
+      addDemoItem('postulaciones', res.data);
+      return { ok: true, data: res.data };
+    }
+    return { ok: false, message: res.message || 'Error al registrar la postulación' };
   },
 
   async patch(id, payload) {
-    await httpClient(`${RESOURCE}/${id}`, {
+    const res = await httpClient(`${RESOURCE}/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(payload)
     });
     updateDemoItem('postulaciones', id, payload);
-    return { ok: true, data: { id, ...payload } };
+    return { ok: true, data: res.ok && res.data ? res.data : { id, ...payload } };
   },
 
   async remove(id) {

@@ -46,6 +46,7 @@ export function openVacanteForm({ item = null, onSave }) {
     e.preventDefault();
 
     const payload = {
+      ...(item || {}),
       title: overlay.querySelector('#title').value.trim(),
       category: overlay.querySelector('#category').value.trim(),
       price: parseFloat(overlay.querySelector('#price').value),

@@ -104,3 +104,58 @@
   --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.7);
   --overlay-bg: rgba(0, 0, 0, 0.75);
 }
+
+/* Accessibility: text scaling */
+html[data-font-size="normal"] { font-size: 100%; }
+html[data-font-size="large"] { font-size: 112.5%; }
+html[data-font-size="xlarge"] { font-size: 125%; }
+
+/* Accessibility: color-vision-friendly semantic palettes.
+   These modes adapt key interface colors rather than simulating the condition. */
+html[data-color-vision="protanopia"] {
+  --color-accent: #1769AA;
+  --color-accent-hover: #115386;
+  --color-success: #1769AA;
+  --color-error: #C47A00;
+  --color-warning: #7A57A5;
+}
+
+html[data-theme="dark"][data-color-vision="protanopia"] {
+  --color-accent: #6DB6E8;
+  --color-accent-hover: #8CC8EE;
+  --color-success: #6DB6E8;
+  --color-error: #F2B35D;
+  --color-warning: #B89ADC;
+}
+
+html[data-color-vision="deuteranopia"] {
+  --color-accent: #2B6CB0;
+  --color-accent-hover: #1E4E83;
+  --color-success: #2B6CB0;
+  --color-error: #B56A00;
+  --color-warning: #7656A6;
+}
+
+html[data-theme="dark"][data-color-vision="deuteranopia"] {
+  --color-accent: #76B7E5;
+  --color-accent-hover: #9ACBEA;
+  --color-success: #76B7E5;
+  --color-error: #ECAF5B;
+  --color-warning: #B89BDB;
+}
+
+html[data-color-vision="tritanopia"] {
+  --color-accent: #9A3E78;
+  --color-accent-hover: #742D5A;
+  --color-success: #2F7D68;
+  --color-error: #B33A3A;
+  --color-warning: #8B5A2B;
+}
+
+html[data-theme="dark"][data-color-vision="tritanopia"] {
+  --color-accent: #D58AB9;
+  --color-accent-hover: #E6A8CE;
+  --color-success: #76B9A7;
+  --color-error: #ED8A8A;
+  --color-warning: #C99A68;
+}

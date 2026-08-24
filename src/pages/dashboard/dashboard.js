@@ -3,6 +3,8 @@ import { initTheme } from '../../utils/theme.js';
 import { initI18n, t } from '../../utils/i18n.js';
 import { renderMenu } from '../../components/menu.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
+import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
+import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 import { renderTable } from '../../components/table.js';
 import { candidatosService } from '../../services/candidatos-service.js';
@@ -10,16 +12,20 @@ import { vacantesService } from '../../services/vacantes-service.js';
 import { empresasService } from '../../services/empresas-service.js';
 import { postulacionesService } from '../../services/postulaciones-service.js';
 import { formatId, formatCurrency } from '../../utils/format.js';
+import { openCandidateProfile } from '../../components/candidate-profile.js';
 
 initTheme();
+initAccessibility();
 initI18n();
 
 const menuContainer = document.getElementById('menu');
 const themeContainer = document.getElementById('theme-switcher-container');
+const accessibilityContainer = document.getElementById('accessibility-menu-container');
 const langContainer = document.getElementById('lang-switcher-container');
 
 renderMenu(menuContainer);
 renderThemeSwitcher(themeContainer);
+renderAccessibilityMenu(accessibilityContainer);
 renderLanguageSwitcher(langContainer);
 
 const mobileBtn = document.getElementById('mobile-menu-btn');
@@ -56,6 +62,14 @@ async function loadDashboardData() {
     data: candidatosRes.data || [],
     isLoading: false,
     error: candidatosRes.ok ? null : candidatosRes.message
+  });
+
+  const candidatesTable = document.getElementById('recent-candidatos-table');
+  candidatesTable.querySelectorAll('.candidate-profile-trigger').forEach(button => {
+    button.addEventListener('click', () => {
+      const item = (candidatosRes.data || []).find(candidate => String(candidate.id) === button.dataset.candidateId);
+      openCandidateProfile({ candidateId: button.dataset.candidateId, candidate: item });
+    });
   });
 
   // Renderizar tabla reciente de Vacantes
