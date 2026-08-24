@@ -20,6 +20,8 @@ export function addDemoItem(resourceKey, item) {
     ...item,
     _isLocal: true
   };
+  // Evitar duplicados por id en el almacén local
+  store.created = store.created.filter(c => String(c.id) !== String(newItem.id));
   store.created.unshift(newItem);
   saveDemoStore(resourceKey, store);
   return newItem;
@@ -57,9 +59,11 @@ export function mergeDemoList(resourceKey, apiItems = [], transformFn = null) {
       return transformFn ? transformFn(merged) : merged;
     });
 
-  // 2. Anteponer items creados localmente que no hayan sido eliminados
+  const apiIds = new Set(processedApiItems.map(item => String(item.id)));
+
+  // 2. Anteponer solo los items creados localmente que no existan ya en la API
   const createdItems = store.created
-    .filter(item => !store.deleted.includes(String(item.id)))
+    .filter(item => !store.deleted.includes(String(item.id)) && !apiIds.has(String(item.id)))
     .map(item => (transformFn ? transformFn(item) : item));
 
   return [...createdItems, ...processedApiItems];

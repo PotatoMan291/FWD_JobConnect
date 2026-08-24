@@ -3,8 +3,8 @@ import { t } from '../utils/i18n.js';
 import { icons } from '../assets/icons/icons.js';
 
 const NAV_ITEMS = [
-  { key: 'dashboard', labelKey: 'menu.dashboard', icon: 'dashboard', path: '/src/pages/dashboard/dashboard.html', roles: ['admin', 'recruiter', 'user'] },
-  { key: 'candidatos', labelKey: 'menu.candidatos', icon: 'candidatos', path: '/src/pages/candidatos/candidatos.html', roles: ['admin', 'recruiter', 'user'] },
+  { key: 'dashboard', labelKey: 'menu.dashboard', icon: 'dashboard', path: '/src/pages/dashboard/dashboard.html', roles: ['admin', 'recruiter'] },
+  { key: 'candidatos', labelKey: 'menu.candidatos', icon: 'candidatos', path: '/src/pages/candidatos/candidatos.html', roles: ['admin', 'recruiter'] },
   { key: 'vacantes', labelKey: 'menu.vacantes', icon: 'vacantes', path: '/src/pages/vacantes/vacantes.html', roles: ['admin', 'recruiter', 'user'] },
   { key: 'empresas', labelKey: 'menu.empresas', icon: 'empresas', path: '/src/pages/empresas/empresas.html', roles: ['admin', 'recruiter'] },
   { key: 'postulaciones', labelKey: 'menu.postulaciones', icon: 'postulaciones', path: '/src/pages/postulaciones/postulaciones.html', roles: ['admin', 'recruiter', 'user'] },
@@ -14,15 +14,16 @@ const NAV_ITEMS = [
 
 export function renderMenu(container, currentUser = null) {
   if (!container) return;
-  const user = currentUser || authService.getCurrentUser() || { firstName: 'Consultor', role: 'recruiter' };
-  const userRole = user.role || 'recruiter';
+  const user = currentUser || authService.getCurrentUser() || { firstName: 'Usuario', role: 'user' };
+  const userRole = user.role || 'user';
   const currentPath = window.location.pathname;
 
   const allowedItems = NAV_ITEMS.filter(item => item.roles.includes(userRole));
+  const brandHref = userRole === 'user' ? '/src/pages/vacantes/vacantes.html' : '/src/pages/dashboard/dashboard.html';
 
   const html = `
     <div class="sidebar-header">
-      <a href="/src/pages/dashboard/dashboard.html" class="brand-logo">
+      <a href="${brandHref}" class="brand-logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28">
           <rect width="32" height="32" rx="6" fill="var(--color-accent)"/>
           <path d="M10 12V10C10 8.89543 10.8954 8 12 8H20C21.1046 8 22 8.89543 22 10V12H24C25.1046 12 26 12.8954 26 14V22C26 23.1046 25.1046 24 24 24H8C6.89543 24 6 23.1046 6 22V14C6 12.8954 6.89543 12 8 12H10ZM12 10V12H20V10H12Z" fill="var(--color-bg)"/>
