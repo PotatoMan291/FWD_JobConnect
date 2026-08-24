@@ -33,9 +33,25 @@ function statusClass(status) {
 function avatarMarkup(candidate) {
   const initials = candidate.fullName.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?';
   if (isSafeUrl(candidate.image)) {
-    return `<img class="candidate-profile-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}">`;
+    return `<img class="candidate-profile-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}" data-fallback-initials="${escapeHTML(initials)}">`;
   }
   return `<div class="candidate-profile-avatar candidate-profile-initials" aria-hidden="true">${escapeHTML(initials)}</div>`;
+}
+
+function localAvatarUrl(initials) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144"><rect width="144" height="144" rx="72" fill="#DCEBE7"/><text x="72" y="82" text-anchor="middle" dominant-baseline="middle" fill="#1F5C4F" font-family="sans-serif" font-size="42" font-weight="700">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function bindProfileAvatarFallback(container, candidate) {
+  const image = container.querySelector('.candidate-profile-avatar[data-fallback-initials]');
+  if (!image) return;
+  image.addEventListener('error', () => {
+    const initials = candidate.fullName.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?';
+    image.onerror = null;
+    image.src = localAvatarUrl(initials);
+    image.removeAttribute('data-fallback-initials');
+  }, { once: true });
 }
 
 function infoItem(label, value, extraClass = '') {
@@ -175,6 +191,7 @@ export function openCandidateProfile({ candidateId, candidate = null, onEdit = n
   const renderProfile = profile => {
     if (!activeOverlay || version !== requestVersion) return;
     body.innerHTML = profileMarkup(profile);
+    bindProfileAvatarFallback(body, profile);
     body.querySelector('.candidate-profile-edit-btn').addEventListener('click', () => {
       closeCandidateProfile();
       if (onEdit) onEdit(profile);

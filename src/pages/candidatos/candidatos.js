@@ -54,8 +54,23 @@ function escapeHTML(value) {
 function candidateAvatar(candidate) {
   const initials = `${candidate.firstName} ${candidate.lastName}`.trim().split(' ').map(part => part[0]).join('').toUpperCase();
   return candidate.image
-    ? `<img class="candidate-list-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}">`
+    ? `<img class="candidate-list-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}" data-fallback-initials="${escapeHTML(initials || '?')}">`
     : `<span class="candidate-list-avatar candidate-list-initials" aria-hidden="true">${escapeHTML(initials || '?')}</span>`;
+}
+
+function localAvatarUrl(initials) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" rx="40" fill="#DCEBE7"/><text x="40" y="46" text-anchor="middle" dominant-baseline="middle" fill="#1F5C4F" font-family="sans-serif" font-size="24" font-weight="700">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function bindAvatarFallback(container) {
+  container.querySelectorAll('.candidate-list-avatar[data-fallback-initials]').forEach(image => {
+    image.addEventListener('error', () => {
+      image.onerror = null;
+      image.src = localAvatarUrl(image.dataset.fallbackInitials || '?');
+      image.removeAttribute('data-fallback-initials');
+    }, { once: true });
+  });
 }
 
 async function loadData() {
@@ -94,6 +109,7 @@ async function loadData() {
       openDeleteConfirmation(id, item);
     }
   });
+  bindAvatarFallback(tableContainer);
 
   tableContainer.querySelectorAll('.candidate-profile-trigger').forEach(button => {
     button.addEventListener('click', () => {
