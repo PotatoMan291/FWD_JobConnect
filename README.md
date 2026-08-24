@@ -1,10 +1,11 @@
 # JobConnect — Plataforma de Gestión de Talento & Reclutamiento
 
+https://trello.com/invite/b/6a8c704a6dd01d94771e59d6/ATTI02f0ba902b3c38d717911b7365aca21195E1C4B4/jobconnect-plan-de-trabajo
 Panel de administración frontend para una empresa de empleabilidad y consultoría de talento humano executive. Construido con **HTML5, CSS3 Vanilla y JavaScript Módulos (ES Modules)**, consumiendo la API pública [DummyJSON](https://dummyjson.com) mediante `fetch` nativo sobre **Vite** y **pnpm**.
 
 ---
 
-## 🌟 Características Principales
+##  Características Principales
 
 1. **Diseño Editorial Original & No Genérico**:
    - Estética inspirada en un ATS boutique / despacho ejecutivo de talento humano.
@@ -29,34 +30,34 @@ Panel de administración frontend para una empresa de empleabilidad y consultor�
    - Modos de prueba inmediatos desde la pantalla de login con un solo clic.
 
 6. **6 Módulos Operativos CRUD**:
-   - 👥 **Candidatos** (`/users`): Soporta `PUT` y `PATCH`.
-   - 💼 **Vacantes** (`/products`): Soporta `PUT` y `PATCH`.
-   - 🏢 **Empresas** (`/carts`): Soporta `PUT`.
-   - 📄 **Postulaciones** (`/posts`): Soporta `PATCH`.
-   - 💬 **Entrevistas** (`/comments`): Soporta `PATCH`.
-   - ☑️ **Tareas Pendientes** (`/todos`): Soporta `PATCH`.
+   -  **Candidatos** (`/users`): Soporta `PUT` y `PATCH`.
+   -  **Vacantes** (`/products`): Soporta `PUT` y `PATCH`.
+   -  **Empresas** (`/carts`): Soporta `PUT`.
+   -  **Postulaciones** (`/posts`): Soporta `PATCH`.
+   -  **Entrevistas** (`/comments`): Soporta `PATCH`.
+   -  **Tareas Pendientes** (`/todos`): Soporta `PATCH`.
 
 ---
 
-## 🔑 Credenciales de Prueba por Rol (Demo)
+##  Credenciales de Prueba por Rol (Demo)
 
 En la pantalla de inicio de sesión puedes hacer clic directamente en los botones de acceso rápido o ingresar manualmente cualquiera de las siguientes cuentas:
 
-### 👑 Rol Administrador (`admin`):
+###  Rol Administrador (`admin`):
 - **Usuario**: `emilys` | **Contraseña**: `emilyspass` *(Emily Johnson — Directora General)*
 - **Usuario**: `michaelw` | **Contraseña**: `michaelwpass` *(Michael Williams — Administrador de Sistema)*
 
-### 💼 Rol Reclutador (`recruiter`):
+###  Rol Reclutador (`recruiter`):
 - **Usuario**: `sophiab` | **Contraseña**: `sophiabpass` *(Sophia Brown — Reclutadora Senior Lead)*
 - **Usuario**: `jamesd` | **Contraseña**: `jamesdpass` *(James Davis — Consultor Executive)*
 
-### 👤 Rol Usuario / Consultor Jr (`user`):
+###  Rol Usuario / Consultor Jr (`user`):
 - **Usuario**: `oliviaw` | **Contraseña**: `oliviawpass` *(Olivia Wilson — Consultora de Talento Jr)*
 - **Usuario**: `benjaminw` | **Contraseña**: `benjaminwpass` *(Benjamin Wilson — Analista de Reclutamiento)*
 
 ---
 
-## 🚀 Requisitos y Puesta en Marcha
+##  Requisitos y Puesta en Marcha
 
 ```bash
 # 1. Clonar el repositorio
