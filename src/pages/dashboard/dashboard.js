@@ -10,6 +10,7 @@ import { vacantesService } from '../../services/vacantes-service.js';
 import { empresasService } from '../../services/empresas-service.js';
 import { postulacionesService } from '../../services/postulaciones-service.js';
 import { formatId, formatCurrency } from '../../utils/format.js';
+import { openCandidateProfile } from '../../components/candidate-profile.js';
 
 initTheme();
 initI18n();
@@ -49,13 +50,21 @@ async function loadDashboardData() {
     container: document.getElementById('recent-candidatos-table'),
     columns: [
       { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id) },
-      { key: 'firstName', header: 'Nombre', render: (val, row) => `${row.firstName} ${row.lastName}` },
+      { key: 'firstName', header: 'Nombre', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
       { key: 'email', header: 'Correo' },
       { key: 'role', header: 'Rol/Posición', render: (val) => `<span class="badge badge-active">${val || 'Candidato'}</span>` }
     ],
     data: candidatosRes.data || [],
     isLoading: false,
     error: candidatosRes.ok ? null : candidatosRes.message
+  });
+
+  const candidatesTable = document.getElementById('recent-candidatos-table');
+  candidatesTable.querySelectorAll('.candidate-profile-trigger').forEach(button => {
+    button.addEventListener('click', () => {
+      const item = (candidatosRes.data || []).find(candidate => String(candidate.id) === button.dataset.candidateId);
+      openCandidateProfile({ candidateId: button.dataset.candidateId, candidate: item });
+    });
   });
 
   // Renderizar tabla reciente de Vacantes

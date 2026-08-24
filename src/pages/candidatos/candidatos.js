@@ -12,6 +12,7 @@ import { openCandidatoForm } from './candidatos-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
 import { formatId } from '../../utils/format.js';
+import { openCandidateProfile } from '../../components/candidate-profile.js';
 
 initTheme();
 initI18n();
@@ -57,10 +58,10 @@ async function loadData() {
 
   const columns = [
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#CAN-') },
-    { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<strong>${row.firstName} ${row.lastName}</strong>` },
+    { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
     { key: 'email', headerKey: 'candidatos.form.email' },
     { key: 'phone', headerKey: 'candidatos.form.phone', isMono: true },
-    { key: 'company', headerKey: 'candidatos.form.company', render: (val) => val && val.name ? val.name : '—' }
+    { key: 'company', headerKey: 'candidatos.form.company', render: (val) => typeof val === 'string' ? val : (val && val.name ? val.name : '—') }
   ];
 
   renderTable({
@@ -73,6 +74,17 @@ async function loadData() {
     onDelete: (id, item) => {
       openDeleteConfirmation(id, item);
     }
+  });
+
+  tableContainer.querySelectorAll('.candidate-profile-trigger').forEach(button => {
+    button.addEventListener('click', () => {
+      const item = res.data.find(candidate => String(candidate.id) === button.dataset.candidateId);
+      openCandidateProfile({
+        candidateId: button.dataset.candidateId,
+        candidate: item,
+        onEdit: selectedCandidate => openCandidatoForm({ item: selectedCandidate, onSave: loadData })
+      });
+    });
   });
 
   renderPagination({

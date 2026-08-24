@@ -340,6 +340,102 @@
   background-color: var(--color-surface-alt);
 }
 
+/* Candidate profile panel */
+.candidate-profile-trigger {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+
+.candidate-profile-trigger:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.candidate-profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-end;
+  background: var(--overlay-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.candidate-profile-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.candidate-profile-panel {
+  width: min(720px, 100%);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transform: translateX(24px);
+  transition: transform var(--transition-normal);
+}
+
+.candidate-profile-overlay.open .candidate-profile-panel { transform: translateX(0); }
+
+.candidate-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-ink-muted);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.candidate-profile-body { overflow-y: auto; padding: var(--space-5); }
+.candidate-profile-content { display: flex; flex-direction: column; gap: var(--space-6); }
+
+.candidate-profile-hero { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: var(--space-4); }
+.candidate-profile-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-accent-soft); }
+.candidate-profile-initials { display: grid; place-items: center; background: var(--color-accent-soft); color: var(--color-accent); font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
+.candidate-profile-heading h2 { margin: var(--space-1) 0; font-size: 1.6rem; }
+.candidate-profile-heading p { color: var(--color-ink-muted); overflow-wrap: anywhere; }
+.candidate-profile-code { font-size: var(--fs-small); color: var(--color-ink-muted); }
+.candidate-profile-muted, .candidate-profile-empty { color: var(--color-ink-muted); font-size: var(--fs-small); }
+
+.candidate-profile-section { border-top: 1px solid var(--color-border); padding-top: var(--space-5); }
+.candidate-profile-section h3 { margin-bottom: var(--space-3); }
+.candidate-profile-section h4 { font-family: var(--font-body); font-size: var(--fs-small); margin: var(--space-3) 0 var(--space-1); }
+.candidate-profile-section p { overflow-wrap: anywhere; }
+.candidate-profile-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
+.candidate-profile-info dt { color: var(--color-ink-muted); font-size: var(--fs-small); margin-bottom: var(--space-1); }
+.candidate-profile-info dd { margin: 0; overflow-wrap: anywhere; }
+.candidate-profile-timeline { display: grid; gap: var(--space-4); }
+.candidate-profile-timeline-item { border-left: 2px solid var(--color-accent); padding-left: var(--space-3); }
+.candidate-profile-timeline-item h4 { margin-top: 0; }
+.candidate-profile-timeline-item p + p { margin-top: var(--space-1); }
+.candidate-profile-skills, .candidate-profile-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.candidate-profile-loading { display: grid; gap: var(--space-4); }
+.candidate-profile-state { padding: var(--space-7) var(--space-4); text-align: center; }
+.candidate-profile-state p { margin: var(--space-2) 0 var(--space-4); color: var(--color-ink-muted); }
+
+@media (max-width: 640px) {
+  .candidate-profile-body { padding: var(--space-4); }
+  .candidate-profile-hero { grid-template-columns: auto 1fr; }
+  .candidate-profile-hero > .badge { grid-column: 1 / -1; justify-self: start; }
+  .candidate-profile-info-grid { grid-template-columns: 1fr; }
+  .candidate-profile-actions .btn { flex: 1 1 180px; }
+}
+
 /* Toast System */
 .toast-container {
   position: fixed;
