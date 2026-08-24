@@ -13,7 +13,7 @@ export const empresasService = {
       const rawCarts = res.data.carts || [];
       const mergedCarts = mergeDemoList('empresas', rawCarts);
 
-      const total = mergedCarts.length;
+      const total = res.data.total ?? mergedCarts.length;
       const paginated = mergedCarts.slice(cursor, cursor + limit);
 
       return {

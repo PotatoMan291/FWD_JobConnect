@@ -85,7 +85,7 @@ export const candidatosService = {
         );
       }
 
-      const total = finalData.length;
+      const total = q ? finalData.length : (res.data.total ?? finalData.length);
       const paginated = finalData.slice(cursor, cursor + limit);
 
       return {

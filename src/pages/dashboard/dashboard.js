@@ -73,7 +73,7 @@ async function loadDashboardData() {
     columns: [
       { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id, '#VAC-') },
       { key: 'title', header: 'Vacante' },
-      { key: 'price', header: 'Rango Salarial', isMono: true, render: (val) => formatCurrency(val * 100) },
+      { key: 'price', header: 'Rango Salarial', isMono: true, render: (val) => formatCurrency(val) },
       { key: 'category', header: 'Área', render: (val) => `<span class="badge badge-neutral">${val}</span>` }
     ],
     data: vacantesRes.data || [],
