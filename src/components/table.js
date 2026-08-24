@@ -89,12 +89,12 @@ export function renderTable({
                   <td style="text-align: right;">
                     <div class="actions-cell" style="justify-content: flex-end;">
                       ${onEdit ? `
-                        <button class="btn btn-icon edit-btn" data-id="${row.id}" title="Editar">
+                        <button class="btn btn-icon edit-btn" data-id="${row.id}" title="${t('action.edit')}">
                           ${icons.edit}
                         </button>
                       ` : ''}
                       ${onDelete ? `
-                        <button class="btn btn-icon btn-danger delete-btn" data-id="${row.id}" title="Eliminar">
+                        <button class="btn btn-icon btn-danger delete-btn" data-id="${row.id}" title="${t('action.delete')}">
                           ${icons.delete}
                         </button>
                       ` : ''}
@@ -133,5 +133,9 @@ export function renderTable({
 
   renderContent();
 
+  if (container._languageListener) {
+    window.removeEventListener('languagechange', container._languageListener);
+  }
+  container._languageListener = renderContent;
   window.addEventListener('languagechange', renderContent);
 }

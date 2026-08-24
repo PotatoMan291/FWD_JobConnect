@@ -10,15 +10,15 @@ export function openTareaForm({ item = null, onSave }) {
   const bodyHTML = `
     <form id="tarea-form">
       <div class="form-group">
-        <label for="todo" data-i18n="tareas.form.todo">Descripción de la Tarea</label>
+        <label for="todo" data-i18n="tareas.form.todo">${t('tareas.form.todo')}</label>
         <input type="text" id="todo" class="input" value="${item ? item.todo || '' : ''}" required />
       </div>
 
       <div class="form-group">
-        <label for="completed" data-i18n="tareas.form.completed">Estado de Cumplimiento</label>
+        <label for="completed" data-i18n="tareas.form.completed">${t('tareas.form.completed')}</label>
         <select id="completed" class="select">
-          <option value="false" ${item && !item.completed ? 'selected' : ''}>Pendiente / En Proceso</option>
-          <option value="true" ${item && item.completed ? 'selected' : ''}>Completada</option>
+          <option value="false" ${item && !item.completed ? 'selected' : ''}>${t('tareas.form.pending')}</option>
+          <option value="true" ${item && item.completed ? 'selected' : ''}>${t('tareas.form.done')}</option>
         </select>
       </div>
     </form>

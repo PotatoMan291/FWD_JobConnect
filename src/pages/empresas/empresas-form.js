@@ -10,17 +10,17 @@ export function openEmpresaForm({ item = null, onSave }) {
   const bodyHTML = `
     <form id="empresa-form">
       <div class="form-group">
-        <label for="userId">ID de Usuario Administrador (Consultor)</label>
+        <label for="userId" data-i18n="empresas.form.userid">${t('empresas.form.userid')}</label>
         <input type="number" id="userId" class="input" value="${item ? item.userId || '1' : '1'}" required />
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
         <div class="form-group">
-          <label for="total" data-i18n="empresas.form.total">Monto Contratado ($)</label>
+          <label for="total" data-i18n="empresas.form.total">${t('empresas.form.total')}</label>
           <input type="number" id="total" class="input" value="${item ? item.total || '5000' : '5000'}" step="100" required />
         </div>
         <div class="form-group">
-          <label for="totalProducts" data-i18n="empresas.form.quantity">Total de Contratos</label>
+          <label for="totalProducts" data-i18n="empresas.form.quantity">${t('empresas.form.quantity')}</label>
           <input type="number" id="totalProducts" class="input" value="${item ? item.totalProducts || '3' : '3'}" min="1" required />
         </div>
       </div>
