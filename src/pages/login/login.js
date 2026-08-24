@@ -2,10 +2,13 @@ import { authService } from '../../services/auth-service.js';
 import { initTheme } from '../../utils/theme.js';
 import { initI18n, t } from '../../utils/i18n.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
+import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
+import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 
 // Inicialización de UI, tema e i18n
 initTheme();
+initAccessibility();
 initI18n();
 
 // Si ya está autenticado, redirigir al dashboard
@@ -14,9 +17,11 @@ if (authService.isAuthenticated()) {
 }
 
 const themeContainer = document.getElementById('theme-switcher-container');
+const accessibilityContainer = document.getElementById('accessibility-menu-container');
 const langContainer = document.getElementById('lang-switcher-container');
 
 renderThemeSwitcher(themeContainer);
+renderAccessibilityMenu(accessibilityContainer);
 renderLanguageSwitcher(langContainer);
 
 const loginForm = document.getElementById('login-form');
