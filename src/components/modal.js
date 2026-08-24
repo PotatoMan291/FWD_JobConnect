@@ -1,9 +1,11 @@
 import { icons } from '../assets/icons/icons.js';
+import { bloquearScroll, desbloquearScroll } from '../utils/scroll-lock.js';
 
 let activeOverlay = null;
 
 export function openModal({ title, bodyHTML, footerHTML, onClose = null }) {
   closeModal();
+  bloquearScroll();
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -59,6 +61,7 @@ export function openModal({ title, bodyHTML, footerHTML, onClose = null }) {
 
 export function closeModal() {
   if (activeOverlay) {
+    desbloquearScroll();
     activeOverlay.classList.remove('open');
     setTimeout(() => {
       if (activeOverlay && activeOverlay.parentNode) {
