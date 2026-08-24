@@ -45,6 +45,19 @@ const currentLimit = 10;
 let currentSearch = '';
 let currentFilters = {};
 
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[character]));
+}
+
+function candidateAvatar(candidate) {
+  const initials = `${candidate.firstName} ${candidate.lastName}`.trim().split(' ').map(part => part[0]).join('').toUpperCase();
+  return candidate.image
+    ? `<img class="candidate-list-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}">`
+    : `<span class="candidate-list-avatar candidate-list-initials" aria-hidden="true">${escapeHTML(initials || '?')}</span>`;
+}
+
 async function loadData() {
   renderTable({ container: tableContainer, columns: [], isLoading: true });
 
@@ -62,6 +75,7 @@ async function loadData() {
   }
 
   const columns = [
+    { key: 'image', header: 'Foto', render: (value, row) => candidateAvatar(row) },
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#CAN-') },
     { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
     { key: 'email', headerKey: 'candidatos.form.email' },
