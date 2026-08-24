@@ -1,6 +1,6 @@
 import { storage } from './storage.js';
-import esDict from '../i18n/es.json';
-import enDict from '../i18n/en.json';
+import esDict from '../i18n/es.js';
+import enDict from '../i18n/en.js';
 
 const dictionaries = {
   es: esDict,

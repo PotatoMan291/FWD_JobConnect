@@ -182,12 +182,12 @@ remove(id)                // DELETE
 
 | Módulo | PUT disponible | PATCH disponible |
 |---|---|---|
-| Candidatos (`/users`) | ✅ | ✅ |
-| Vacantes (`/products`) | ✅ | ✅ |
-| Empresas (`/carts`) | ✅ | — |
-| Postulaciones (`/posts`) | — | ✅ |
-| Entrevistas (`/comments`) | — | ✅ |
-| Tareas (`/todos`) | — | ✅ |
+| Candidatos (`/users`) | Si | Si |
+| Vacantes (`/products`) | Si | Si |
+| Empresas (`/carts`) | Si | — |
+| Postulaciones (`/posts`) | — | Si |
+| Entrevistas (`/comments`) | — | Si |
+| Tareas (`/todos`) | — | Si |
 
 Las páginas de edición usan `update()` o `patch()` según lo que el módulo soporte, tal como indica la tabla del enunciado.
 
