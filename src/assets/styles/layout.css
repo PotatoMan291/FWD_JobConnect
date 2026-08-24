@@ -120,13 +120,13 @@
 }
 
 .top-header {
-  height: 64px;
+  min-height: 64px;
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-6);
+  padding: var(--space-2) var(--space-6);
   position: sticky;
   top: 0;
   z-index: 90;

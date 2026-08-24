@@ -12,7 +12,12 @@
         if (session) {
           const parsed = JSON.parse(session);
           if (parsed && parsed.token) {
-            window.location.replace('/src/pages/dashboard/dashboard.html');
+            const role = (parsed.user && parsed.user.role) || 'recruiter';
+            if (role === 'user') {
+              window.location.replace('/src/pages/vacantes/vacantes.html');
+            } else {
+              window.location.replace('/src/pages/dashboard/dashboard.html');
+            }
             return;
           }
         }

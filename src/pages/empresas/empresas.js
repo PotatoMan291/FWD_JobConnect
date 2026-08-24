@@ -3,6 +3,8 @@ import { initTheme } from '../../utils/theme.js';
 import { initI18n, t } from '../../utils/i18n.js';
 import { renderMenu } from '../../components/menu.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
+import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
+import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 import { renderTable } from '../../components/table.js';
 import { renderPagination } from '../../components/pagination.js';
@@ -13,14 +15,17 @@ import { showToast } from '../../components/toast.js';
 import { formatId, formatCurrency } from '../../utils/format.js';
 
 initTheme();
+initAccessibility();
 initI18n();
 
 const menuContainer = document.getElementById('menu');
 const themeContainer = document.getElementById('theme-switcher-container');
+const accessibilityContainer = document.getElementById('accessibility-menu-container');
 const langContainer = document.getElementById('lang-switcher-container');
 
 renderMenu(menuContainer);
 renderThemeSwitcher(themeContainer);
+renderAccessibilityMenu(accessibilityContainer);
 renderLanguageSwitcher(langContainer);
 
 const mobileBtn = document.getElementById('mobile-menu-btn');

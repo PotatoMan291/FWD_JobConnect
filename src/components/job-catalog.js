@@ -1,6 +1,9 @@
 import { icons } from '../assets/icons/icons.js';
 import { openModal, closeModal } from './modal.js';
 import { vacantesService, normalizeJob } from '../services/vacantes-service.js';
+import { postulacionesService } from '../services/postulaciones-service.js';
+import { authService } from '../services/auth-service.js';
+import { showToast } from './toast.js';
 import { storage } from '../utils/storage.js';
 import { formatDate } from '../utils/format.js';
 
@@ -220,8 +223,34 @@ export async function openJobDetails(jobId) {
   }
 }
 
-export function applyToJob(jobId) {
-  window.location.assign(`/src/pages/postulaciones/postulaciones.html?vacanteId=${encodeURIComponent(jobId)}`);
+export async function applyToJob(jobId) {
+  const cachedJob = jobsCache.get(String(jobId));
+  let job = cachedJob;
+  if (!job) {
+    const res = await vacantesService.getById(jobId);
+    if (res && res.ok && res.data) job = normalizeJob(res.data);
+  }
+
+  const titleStr = job ? job.title : `Vacante #${jobId}`;
+  const companyStr = job ? job.companyName : 'Empresa';
+  const user = authService.getCurrentUser() || { firstName: 'Postulante' };
+
+  showToast('Registrando postulación...', 'info');
+
+  const createRes = await postulacionesService.create({
+    title: `Postulación a ${titleStr}`,
+    body: `Postulación enviada por ${user.firstName || user.username || 'Usuario'} ${user.lastName || ''} para la posición de ${titleStr} en ${companyStr}.`,
+    userId: user.id || 1
+  });
+
+  if (createRes && createRes.ok) {
+    showToast('¡Postulación enviada y registrada con éxito!', 'success');
+    setTimeout(() => {
+      window.location.assign('/src/pages/postulaciones/postulaciones.html');
+    }, 600);
+  } else {
+    showToast((createRes && createRes.message) || 'Error al registrar la postulación', 'error');
+  }
 }
 
 export function toggleSavedJob(jobId) {

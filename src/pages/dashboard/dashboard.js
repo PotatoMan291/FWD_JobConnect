@@ -1,8 +1,10 @@
 import '../../guards/auth-guard.js';
 import { initTheme } from '../../utils/theme.js';
-import { initI18n } from '../../utils/i18n.js';
+import { initI18n, t } from '../../utils/i18n.js';
 import { renderMenu } from '../../components/menu.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
+import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
+import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 import { renderTable } from '../../components/table.js';
 import { candidatosService } from '../../services/candidatos-service.js';
@@ -13,14 +15,17 @@ import { formatId, formatCurrency } from '../../utils/format.js';
 import { openCandidateProfile } from '../../components/candidate-profile.js';
 
 initTheme();
+initAccessibility();
 initI18n();
 
 const menuContainer = document.getElementById('menu');
 const themeContainer = document.getElementById('theme-switcher-container');
+const accessibilityContainer = document.getElementById('accessibility-menu-container');
 const langContainer = document.getElementById('lang-switcher-container');
 
 renderMenu(menuContainer);
 renderThemeSwitcher(themeContainer);
+renderAccessibilityMenu(accessibilityContainer);
 renderLanguageSwitcher(langContainer);
 
 const mobileBtn = document.getElementById('mobile-menu-btn');
@@ -49,10 +54,10 @@ async function loadDashboardData() {
   renderTable({
     container: document.getElementById('recent-candidatos-table'),
     columns: [
-      { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id) },
-      { key: 'firstName', header: 'Nombre', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
-      { key: 'email', header: 'Correo' },
-      { key: 'role', header: 'Rol/Posición', render: (val) => `<span class="badge badge-active">${val || 'Candidato'}</span>` }
+      { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id) },
+      { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `${row.firstName} ${row.lastName}` },
+      { key: 'email', headerKey: 'candidatos.form.email' },
+      { key: 'role', headerKey: 'dashboard.table.candidato.role', render: (val) => `<span class="badge badge-active">${val || t('role.candidate')}</span>` }
     ],
     data: candidatosRes.data || [],
     isLoading: false,

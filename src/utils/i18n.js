@@ -1,16 +1,18 @@
 import { storage } from './storage.js';
 import esDict from '../i18n/es.js';
 import enDict from '../i18n/en.js';
+import zhDict from '../i18n/zh.js';
 
 const dictionaries = {
   es: esDict,
-  en: enDict
+  en: enDict,
+  zh: zhDict
 };
 
 let currentLang = 'es';
 
 export function getLanguage() {
-  return storage.get('lang', 'es');
+  return storage.get('jobconnect-language', 'es');
 }
 
 export function t(key, params = {}) {
@@ -43,7 +45,7 @@ export function updatePageTranslations() {
 export function setLanguage(lang) {
   const targetLang = dictionaries[lang] ? lang : 'es';
   currentLang = targetLang;
-  storage.set('lang', targetLang);
+  storage.set('jobconnect-language', targetLang);
   document.documentElement.setAttribute('lang', targetLang);
   updatePageTranslations();
   window.dispatchEvent(new CustomEvent('languagechange', { detail: { lang: targetLang } }));

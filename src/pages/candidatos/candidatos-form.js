@@ -12,22 +12,22 @@ export function openCandidatoForm({ item = null, onSave }) {
     <form id="candidato-form">
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
         <div class="form-group">
-          <label for="firstName" data-i18n="candidatos.form.name">Nombre</label>
+          <label for="firstName" data-i18n="candidatos.form.name">${t('candidatos.form.name')}</label>
           <input type="text" id="firstName" class="input" value="${item ? item.firstName || '' : ''}" required />
         </div>
         <div class="form-group">
-          <label for="lastName" data-i18n="candidatos.form.lastname">Apellido</label>
+          <label for="lastName" data-i18n="candidatos.form.lastname">${t('candidatos.form.lastname')}</label>
           <input type="text" id="lastName" class="input" value="${item ? item.lastName || '' : ''}" required />
         </div>
       </div>
 
       <div class="form-group">
-        <label for="email" data-i18n="candidatos.form.email">Correo Electrónico</label>
+        <label for="email" data-i18n="candidatos.form.email">${t('candidatos.form.email')}</label>
         <input type="email" id="email" class="input" value="${item ? item.email || '' : ''}" required />
       </div>
 
       <div class="form-group">
-        <label for="phone" data-i18n="candidatos.form.phone">Teléfono</label>
+        <label for="phone" data-i18n="candidatos.form.phone">${t('candidatos.form.phone')}</label>
         <input type="text" id="phone" class="input" value="${item ? item.phone || '' : ''}" />
       </div>
 

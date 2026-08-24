@@ -31,6 +31,11 @@ export default {
   "dashboard.metric.postulaciones": "Postulaciones Totales",
   "dashboard.recent.candidatos": "Últimos Candidatos Evaluados",
   "dashboard.recent.vacantes": "Vacantes Requeridas Recientemente",
+  "dashboard.table.candidato.role": "Rol/Posición",
+  "dashboard.table.vacante.title": "Vacante",
+  "dashboard.table.vacante.salary": "Rango Salarial",
+  "dashboard.table.vacante.area": "Área",
+  "role.candidate": "Candidato",
 
   "candidatos.title": "Gestión de Candidatos",
   "candidatos.subtitle": "Directorio de talentos, perfiles profesionales y datos de contacto",
@@ -57,6 +62,7 @@ export default {
   "empresas.edit": "Editar Empresa",
   "empresas.form.total": "Monto Contratado",
   "empresas.form.quantity": "Total de Contratos",
+  "empresas.form.userid": "ID de Usuario Administrador (Consultor)",
 
   "postulaciones.title": "Postulaciones & Ensayos",
   "postulaciones.subtitle": "Evaluación de perfiles, publicaciones de ofertas y comentarios",
@@ -70,6 +76,8 @@ export default {
   "entrevistas.new": "Nueva Entrevista",
   "entrevistas.edit": "Editar Entrevista",
   "entrevistas.form.body": "Comentarios de Entrevista",
+  "entrevistas.form.postid": "ID de Postulación Asociada",
+  "entrevistas.form.userid": "ID de Entrevistador",
 
   "tareas.title": "Tareas & Seguimiento",
   "tareas.subtitle": "Lista de actividades operativas y tareas pendientes de contratación",
@@ -77,6 +85,8 @@ export default {
   "tareas.edit": "Editar Tarea",
   "tareas.form.todo": "Descripción de la Tarea",
   "tareas.form.completed": "Estado de Cumplimiento",
+  "tareas.form.pending": "Pendiente / En Proceso",
+  "tareas.form.done": "Completada",
 
   "table.id": "ID",
   "table.name": "Nombre / Título",
@@ -102,8 +112,39 @@ export default {
   "modal.delete.confirm": "¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer.",
   "modal.delete.submit": "Sí, Eliminar",
 
+  "action.edit": "Editar",
+  "action.delete": "Eliminar",
+
   "toast.create.success": "Registro creado correctamente",
   "toast.update.success": "Registro actualizado correctamente",
   "toast.delete.success": "Registro eliminado correctamente",
-  "toast.error": "Ocurrió un error al procesar la solicitud"
+  "toast.error": "Ocurrió un error al procesar la solicitud",
+
+  "accessibility.open": "Abrir menú de accesibilidad",
+  "accessibility.title": "Accesibilidad",
+  "accessibility.subtitle": "Personaliza la visualización y la lectura de la interfaz.",
+  "accessibility.close": "Cerrar menú de accesibilidad",
+  "accessibility.colorVision": "Visión de color",
+  "accessibility.colorVisionHelp": "Ajusta los colores principales para mejorar su diferenciación.",
+  "accessibility.none": "Sin ajuste",
+  "accessibility.protanopia": "Protanopía",
+  "accessibility.deuteranopia": "Deuteranopía",
+  "accessibility.tritanopia": "Tritanopía",
+  "accessibility.fontSize": "Tamaño del texto",
+  "accessibility.fontNormal": "Normal",
+  "accessibility.fontLarge": "Grande",
+  "accessibility.fontXLarge": "Muy grande",
+  "accessibility.tts": "Texto a voz",
+  "accessibility.ttsHelp": "Lee en voz alta el contenido principal de la página.",
+  "accessibility.read": "Leer página",
+  "accessibility.pause": "Pausar",
+  "accessibility.resume": "Continuar",
+  "accessibility.stop": "Detener",
+  "accessibility.reading": "Leyendo el contenido de la página...",
+  "accessibility.paused": "Lectura pausada.",
+  "accessibility.stopped": "Lectura detenida.",
+  "accessibility.finished": "Lectura finalizada.",
+  "accessibility.ttsUnsupported": "Tu navegador no admite texto a voz.",
+  "accessibility.ttsError": "No fue posible reproducir la lectura.",
+  "accessibility.noText": "No se encontró texto para leer."
 };

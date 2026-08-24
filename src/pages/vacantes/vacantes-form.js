@@ -10,22 +10,22 @@ export function openVacanteForm({ item = null, onSave }) {
   const bodyHTML = `
     <form id="vacante-form">
       <div class="form-group">
-        <label for="title" data-i18n="vacantes.form.title">Título del Puesto</label>
+        <label for="title" data-i18n="vacantes.form.title">${t('vacantes.form.title')}</label>
         <input type="text" id="title" class="input" value="${item ? item.title || '' : ''}" required />
       </div>
 
       <div class="form-group">
-        <label for="category" data-i18n="vacantes.form.category">Categoría / Área</label>
+        <label for="category" data-i18n="vacantes.form.category">${t('vacantes.form.category')}</label>
         <input type="text" id="category" class="input" value="${item ? item.category || '' : ''}" required />
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
         <div class="form-group">
-          <label for="price" data-i18n="vacantes.form.price">Rango Salarial ($)</label>
+          <label for="price" data-i18n="vacantes.form.price">${t('vacantes.form.price')}</label>
           <input type="number" id="price" class="input" value="${item ? item.price || '' : ''}" step="100" required />
         </div>
         <div class="form-group">
-          <label for="stock" data-i18n="vacantes.form.stock">Plazas Disponibles</label>
+          <label for="stock" data-i18n="vacantes.form.stock">${t('vacantes.form.stock')}</label>
           <input type="number" id="stock" class="input" value="${item ? item.stock || '1' : '1'}" min="1" required />
         </div>
       </div>
