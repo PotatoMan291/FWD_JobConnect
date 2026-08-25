@@ -1,6 +1,7 @@
 import { httpClient } from './http-client.js';
 import { buildQueryParams } from '../utils/query-params.js';
 import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem } from '../utils/demo-store.js';
+import { applyRecordFilters } from '../utils/apply-filters.js';
 
 const RESOURCE = '/posts';
 
@@ -23,7 +24,8 @@ export const postulacionesService = {
         );
       }
 
-      const total = q ? finalData.length : (res.data.total ?? finalData.length);
+      finalData = applyRecordFilters(finalData, filters);
+      const total = finalData.length;
       const paginated = finalData.slice(cursor, cursor + limit);
 
       return {

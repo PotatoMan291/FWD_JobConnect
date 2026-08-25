@@ -77,6 +77,7 @@ export function renderJobCard(rawJob, { showManageActions = false } = {}) {
         <img class="job-card-image" src="${escapeHTML(imageSrc)}" alt="Representación de ${escapeHTML(job.companyName)}" loading="lazy" data-fallback-src="${FALLBACK_IMAGE}">
         <div class="job-card-media-overlay"></div>
         ${job.featured ? '<span class="job-card-featured">Destacado</span>' : ''}
+        ${job.matchScore != null ? `<span class="job-card-match" title="${escapeHTML(job.matchReason || '')}">${escapeHTML(job.matchScore)}% afinidad</span>` : ''}
         <button class="btn btn-icon job-card-save" type="button" data-save-job="${escapeHTML(job.id)}" aria-pressed="${saved}" aria-label="${saved ? 'Quitar de guardados' : 'Guardar oferta'}">${icons.bookmark}</button>
         <div class="job-card-logo">${logo}</div>
       </div>
@@ -240,7 +241,8 @@ export async function applyToJob(jobId) {
   const createRes = await postulacionesService.create({
     title: `Postulación a ${titleStr}`,
     body: `Postulación enviada por ${user.firstName || user.username || 'Usuario'} ${user.lastName || ''} para la posición de ${titleStr} en ${companyStr}.`,
-    userId: user.id || 1
+    userId: user.id || 1,
+    vacancyId: Number(jobId) || jobId
   });
 
   if (createRes && createRes.ok) {

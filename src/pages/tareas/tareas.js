@@ -6,6 +6,7 @@ import { renderThemeSwitcher } from '../../components/theme-switcher.js';
 import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
 import { initAccessibility } from '../../utils/accessibility.js';
 import { renderLanguageSwitcher } from '../../components/language-switcher.js';
+import { createFilterLayout } from '../../components/filter-layout.js';
 import { renderTable } from '../../components/table.js';
 import { renderPagination } from '../../components/pagination.js';
 import { tareasService } from '../../services/tareas-service.js';
@@ -33,19 +34,22 @@ if (mobileBtn) {
   mobileBtn.addEventListener('click', () => menuContainer.classList.toggle('open'));
 }
 
+const filterContainer = document.getElementById('filter-container');
 const tableContainer = document.getElementById('table-container');
 const paginationContainer = document.getElementById('pagination-container');
 const createBtn = document.getElementById('create-tarea-btn');
 
 let currentCursor = 0;
 const currentLimit = 10;
+let currentFilters = {};
 
 async function loadData() {
   renderTable({ container: tableContainer, columns: [], isLoading: true });
 
   const res = await tareasService.getAll({
     cursor: currentCursor,
-    limit: currentLimit
+    limit: currentLimit,
+    filters: currentFilters
   });
 
   if (!res.ok) {
@@ -111,6 +115,21 @@ function openDeleteConfirmation(id, item) {
     }
   });
 }
+
+createFilterLayout({
+  container: filterContainer,
+  fields: [
+    { key: 'completed', type: 'select', labelKey: 'filter.status', options: [
+      { value: 'false', labelKey: 'tareas.form.pending' },
+      { value: 'true', labelKey: 'tareas.form.done' }
+    ]}
+  ],
+  onFilterChange: (filters) => {
+    currentFilters = { completed: filters.completed || '' };
+    currentCursor = 0;
+    loadData();
+  }
+});
 
 createBtn.addEventListener('click', () => {
   openTareaForm({ onSave: loadData });

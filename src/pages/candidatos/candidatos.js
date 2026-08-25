@@ -10,6 +10,9 @@ import { createFilterLayout } from '../../components/filter-layout.js';
 import { renderTable } from '../../components/table.js';
 import { renderPagination } from '../../components/pagination.js';
 import { candidatosService } from '../../services/candidatos-service.js';
+import { vacantesService } from '../../services/vacantes-service.js';
+import { aiMatchService } from '../../services/ai-match-service.js';
+import { authService } from '../../services/auth-service.js';
 import { openCandidatoForm } from './candidatos-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
@@ -44,6 +47,11 @@ let currentCursor = 0;
 const currentLimit = 10;
 let currentSearch = '';
 let currentFilters = {};
+let vacancyOptions = [];
+let aiRankings = new Map();
+let aiEnabled = false;
+const currentUser = authService.getCurrentUser();
+const canSelectVacancy = ['admin', 'recruiter'].includes(currentUser?.role);
 
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>'"]/g, character => ({
@@ -77,10 +85,10 @@ async function loadData() {
   renderTable({ container: tableContainer, columns: [], isLoading: true });
 
   const res = await candidatosService.getAll({
-    cursor: currentCursor,
-    limit: currentLimit,
+    cursor: aiEnabled ? 0 : currentCursor,
+    limit: aiEnabled ? 100 : currentLimit,
     q: currentSearch,
-    filters: currentFilters
+    filters: aiEnabled ? { workMode: currentFilters.workMode, location: currentFilters.location } : currentFilters
   });
 
   if (!res.ok) {
@@ -89,19 +97,40 @@ async function loadData() {
     return;
   }
 
+  let data = res.data;
+  let total = res.total;
+  if (aiEnabled && aiRankings.size) {
+    data = [...data].sort((a, b) => (aiRankings.get(String(b.id))?.score || 0) - (aiRankings.get(String(a.id))?.score || 0));
+    total = data.length;
+    data = data.slice(currentCursor, currentCursor + currentLimit);
+  }
+
   const columns = [
     { key: 'image', header: 'Foto', render: (value, row) => candidateAvatar(row) },
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#CAN-') },
     { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
+    { key: 'professionalTitle', headerKey: 'dashboard.table.candidato.role', render: (val, row) => escapeHTML(val || row.role || '—') },
     { key: 'email', headerKey: 'candidatos.form.email' },
     { key: 'phone', headerKey: 'candidatos.form.phone', isMono: true },
     { key: 'company', headerKey: 'candidatos.form.company', render: (val) => typeof val === 'string' ? val : (val && val.name ? val.name : '—') }
   ];
 
+  if (aiEnabled) {
+    columns.splice(3, 0, {
+      key: 'aiScore',
+      headerKey: 'filter.ai.score',
+      render: (_val, row) => {
+        const ranking = aiRankings.get(String(row.id));
+        if (!ranking) return '—';
+        return `<span class="ai-match-badge" title="${escapeHTML(ranking.reason || '')}">${ranking.score}%</span>`;
+      }
+    });
+  }
+
   renderTable({
     container: tableContainer,
     columns,
-    data: res.data,
+    data,
     onEdit: (id, item) => {
       openCandidatoForm({ item, onSave: loadData });
     },
@@ -113,7 +142,7 @@ async function loadData() {
 
   tableContainer.querySelectorAll('.candidate-profile-trigger').forEach(button => {
     button.addEventListener('click', () => {
-      const item = res.data.find(candidate => String(candidate.id) === button.dataset.candidateId);
+      const item = data.find(candidate => String(candidate.id) === button.dataset.candidateId);
       openCandidateProfile({
         candidateId: button.dataset.candidateId,
         candidate: item,
@@ -124,9 +153,9 @@ async function loadData() {
 
   renderPagination({
     container: paginationContainer,
-    skip: res.skip,
+    skip: currentCursor,
     limit: currentLimit,
-    total: res.total,
+    total,
     onCursorChange: (newCursor) => {
       currentCursor = newCursor;
       loadData();
@@ -156,18 +185,93 @@ function openDeleteConfirmation(id, item) {
   });
 }
 
-// Inicializar filtros
-createFilterLayout({
+const filterFields = [
+  { key: 'search', type: 'text', placeholder: 'filter.search' },
+  { key: 'workMode', type: 'select', labelKey: 'filter.workMode', options: [
+    { value: 'Remoto', label: 'Remoto' },
+    { value: 'Hibrido', label: 'Híbrido' },
+    { value: 'Presencial', label: 'Presencial' }
+  ]},
+  { key: 'location', type: 'select', labelKey: 'filter.location', options: [
+    { value: 'Costa Rica', label: 'Costa Rica' },
+    { value: 'Mexico', label: 'México' },
+    { value: 'Espana', label: 'España' },
+    { value: 'Estados Unidos', label: 'Estados Unidos' },
+    { value: 'Argentina', label: 'Argentina' },
+    { value: 'Brasil', label: 'Brasil' }
+  ]}
+];
+
+if (canSelectVacancy) {
+  filterFields.splice(1, 0, {
+    key: 'vacancyId',
+    type: 'select',
+    labelKey: 'filter.vacancy',
+    options: vacancyOptions
+  });
+  filterFields.push({
+    key: 'ai',
+    type: 'action',
+    labelKey: 'filter.ai.candidates',
+    icon: 'sparkles'
+  });
+}
+
+const filterLayout = createFilterLayout({
   container: filterContainer,
-  fields: [
-    { key: 'search', type: 'text', placeholder: 'filter.search' }
-  ],
+  fields: filterFields,
   onFilterChange: (filters) => {
     currentSearch = filters.search || '';
+    const nextVacancy = filters.vacancyId || '';
+    if (nextVacancy !== (currentFilters.vacancyId || '')) {
+      aiEnabled = false;
+      aiRankings = new Map();
+    }
+    currentFilters = {
+      vacancyId: nextVacancy,
+      workMode: filters.workMode || '',
+      location: filters.location || ''
+    };
     currentCursor = 0;
+    loadData();
+  },
+  onAction: async (actionKey, filters) => {
+    if (actionKey !== 'ai') return;
+    if (!filters.vacancyId) {
+      showToast(t('filter.ai.needVacancy'), 'error');
+      return;
+    }
+    showToast(t('filter.ai.running'), 'info');
+    const pool = await candidatosService.getAll({
+      cursor: 0,
+      limit: 100,
+      q: currentSearch,
+      filters: { workMode: filters.workMode || '', location: filters.location || '' }
+    });
+    const res = await aiMatchService.rankCandidates({
+      vacancyId: filters.vacancyId,
+      candidateIds: (pool.data || []).map(candidate => candidate.id)
+    });
+    if (!res.ok) {
+      showToast(res.message || t('toast.error'), 'error');
+      return;
+    }
+    aiRankings = new Map((res.data.rankings || []).map(item => [String(item.id), item]));
+    aiEnabled = true;
+    currentCursor = 0;
+    showToast(res.data.source === 'openrouter' ? t('filter.ai.success') : t('filter.ai.fallback'), 'success');
     loadData();
   }
 });
+
+async function loadVacancyOptions() {
+  const res = await vacantesService.getAll({ cursor: 0, limit: 100 });
+  if (!res.ok) return;
+  vacancyOptions = (res.data || []).map(job => ({ value: String(job.id), label: job.title }));
+  filterLayout.setOptions('vacancyId', vacancyOptions);
+}
+
+if (canSelectVacancy) loadVacancyOptions();
 
 createBtn.addEventListener('click', () => {
   openCandidatoForm({ onSave: loadData });

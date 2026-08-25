@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { key: 'dashboard', labelKey: 'menu.dashboard', icon: 'dashboard', path: '/src/pages/dashboard/dashboard.html', roles: ['admin', 'recruiter'] },
   { key: 'candidatos', labelKey: 'menu.candidatos', icon: 'candidatos', path: '/src/pages/candidatos/candidatos.html', roles: ['admin', 'recruiter'] },
   { key: 'vacantes', labelKey: 'menu.vacantes', icon: 'vacantes', path: '/src/pages/vacantes/vacantes.html', roles: ['admin', 'recruiter', 'user'] },
+  { key: 'perfil', labelKey: 'menu.profile', icon: 'candidatos', path: '/src/pages/perfil/perfil.html', roles: ['admin', 'recruiter', 'user'] },
   { key: 'empresas', labelKey: 'menu.empresas', icon: 'empresas', path: '/src/pages/empresas/empresas.html', roles: ['admin', 'recruiter'] },
   { key: 'postulaciones', labelKey: 'menu.postulaciones', icon: 'postulaciones', path: '/src/pages/postulaciones/postulaciones.html', roles: ['admin', 'recruiter', 'user'] },
   { key: 'entrevistas', labelKey: 'menu.entrevistas', icon: 'entrevistas', path: '/src/pages/entrevistas/entrevistas.html', roles: ['admin', 'recruiter'] },

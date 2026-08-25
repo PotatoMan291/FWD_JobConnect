@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobConnect - Mi perfil</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/src/assets/styles/tokens.css">
+  <link rel="stylesheet" href="/src/assets/styles/base.css">
+  <link rel="stylesheet" href="/src/assets/styles/components.css">
+  <link rel="stylesheet" href="/src/assets/styles/layout.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside id="menu"></aside>
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+          <button id="mobile-menu-btn" class="mobile-menu-toggle" aria-label="Abrir menú">☰</button>
+          <div class="header-title-wrapper">
+            <h2 class="header-title">Mi perfil profesional</h2>
+            <span class="header-subtitle">Presenta tu experiencia para encontrar mejores oportunidades</span>
+          </div>
+        </div>
+        <div class="header-controls">
+          <div id="theme-switcher-container"></div>
+          <div id="accessibility-menu-container"></div>
+          <div id="lang-switcher-container"></div>
+        </div>
+      </header>
+      <main class="content-body">
+        <section class="section-banner" aria-labelledby="profile-title">
+          <img class="section-banner-image" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=82" alt="Profesional preparando su perfil laboral">
+          <div class="section-banner-content">
+            <h1 id="profile-title">Tu siguiente oportunidad empieza con tu perfil</h1>
+            <p>Comparte tus fortalezas, experiencia y documentos profesionales.</p>
+          </div>
+        </section>
+        <section class="form-card" style="max-width: 900px; margin: var(--space-6) auto;">
+          <form id="profile-form">
+            <div class="form-grid-2">
+              <div class="form-group"><label for="firstName">Nombre</label><input id="firstName" class="input" required></div>
+              <div class="form-group"><label for="lastName">Apellidos</label><input id="lastName" class="input" required></div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group"><label for="professionalTitle">Título profesional</label><input id="professionalTitle" class="input" placeholder="Ej. Diseñadora UX Senior" required></div>
+              <div class="form-group"><label for="country">País</label><select id="country" class="input" required></select></div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group"><label for="province">Provincia / Estado</label><select id="province" class="input" required></select></div>
+              <div class="form-group"><label for="canton">Cantón / Ciudad</label><select id="canton" class="input" required></select></div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group"><label for="email">Correo electrónico</label><input id="email" class="input" type="email" required></div>
+              <div class="form-group"><label for="phone">Teléfono</label><input id="phone" class="input" type="tel"></div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group"><label for="workMode">Modalidad preferida</label><select id="workMode" class="input"><option value="">Selecciona una opción</option><option>Remoto</option><option>Hibrido</option><option>Presencial</option></select></div>
+              <div class="form-group"><label for="availability">Disponibilidad</label><input id="availability" class="input" placeholder="Ej. Inmediata o 15 días"></div>
+            </div>
+            <div class="form-group">
+              <label for="skill-input">Habilidades</label>
+              <div style="display:flex; gap: var(--space-2);">
+                <input id="skill-input" class="input" placeholder="Ej. liderazgo" autocomplete="off">
+                <button type="button" id="add-skill-btn" class="btn btn-secondary">Agregar</button>
+              </div>
+              <div id="skills-list" style="display:flex; flex-wrap:wrap; gap: var(--space-2); margin-top: var(--space-2);"></div>
+            </div>
+            <div class="form-group"><label for="about">Acerca de ti</label><textarea id="about" class="input" rows="5" placeholder="Resume tu experiencia y lo que buscas en tu próximo empleo"></textarea></div>
+            <div class="form-grid-2">
+              <div class="form-group"><label for="linkedinUrl">LinkedIn</label><input id="linkedinUrl" class="input" type="url" placeholder="https://linkedin.com/in/tu-nombre"></div>
+              <div class="form-group"><label for="portfolioUrl">Portafolio</label><input id="portfolioUrl" class="input" type="url" placeholder="https://tu-portafolio.com"></div>
+            </div>
+            <div class="form-group"><label for="cvFile">Currículum (PDF, DOC o DOCX)</label><input id="cvFile" class="input" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><small id="cv-status">Puedes reemplazar tu archivo cuando quieras.</small></div>
+            <button type="submit" class="btn btn-primary">Guardar mi perfil</button>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="./perfil.js"></script>
+</body>
+</html>

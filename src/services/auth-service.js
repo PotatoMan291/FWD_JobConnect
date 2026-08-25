@@ -2,6 +2,31 @@ import { httpClient } from './http-client.js';
 import { storage } from '../utils/storage.js';
 
 export const authService = {
+  register({ firstName, lastName, email, username, password }) {
+    const users = storage.get('registered_users', []);
+    const normalizedUsername = username.trim().toLowerCase();
+    if (users.some(user => user.username === normalizedUsername)) {
+      return { ok: false, message: 'Ese usuario ya está registrado.' };
+    }
+
+    const user = {
+      id: `local-${Date.now()}`,
+      username: normalizedUsername,
+      password,
+      email: email.trim().toLowerCase(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      role: 'user'
+    };
+    users.push(user);
+    storage.set('registered_users', users);
+
+    const sessionUser = { ...user };
+    delete sessionUser.password;
+    storage.set('session', { token: `local-${Date.now()}`, refreshToken: '', user: sessionUser });
+    return { ok: true, user: sessionUser };
+  },
+
   async login(username, password) {
     const res = await httpClient('/auth/login', {
       method: 'POST',
@@ -43,6 +68,16 @@ export const authService = {
       });
 
       return { ok: true, user: userObj };
+    }
+
+    const localUser = storage.get('registered_users', []).find(user =>
+      user.username === username.trim().toLowerCase() && user.password === password
+    );
+    if (localUser) {
+      const user = { ...localUser };
+      delete user.password;
+      storage.set('session', { token: `local-${Date.now()}`, refreshToken: '', user });
+      return { ok: true, user };
     }
 
     return { ok: false, message: res.message || 'Credenciales inválidas' };

@@ -1,6 +1,7 @@
 import { httpClient } from './http-client.js';
 import { buildQueryParams } from '../utils/query-params.js';
-import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem } from '../utils/demo-store.js';
+import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem, getDemoStore } from '../utils/demo-store.js';
+import { applyRecordFilters } from '../utils/apply-filters.js';
 
 const RESOURCE = '/products';
 
@@ -51,24 +52,27 @@ export function normalizeJob(raw = {}) {
 
 export const vacantesService = {
   async getAll({ cursor = 0, limit = 10, q = '', filters = {} } = {}) {
-    const query = buildQueryParams({ limit: 1000, skip: 0, q, filters });
+    const query = buildQueryParams({ limit: 1000, skip: 0, q });
     const endpoint = q ? `${RESOURCE}/search${query}` : `${RESOURCE}${query}`;
     const res = await httpClient(endpoint);
 
     if (res.ok && res.data) {
       const rawProducts = res.data.products || [];
-      const mergedProducts = mergeDemoList('vacantes', rawProducts);
+      const mergedProducts = mergeDemoList('vacantes', rawProducts).map(normalizeJob);
 
       let finalData = mergedProducts;
       if (q) {
         const queryLower = q.toLowerCase();
         finalData = mergedProducts.filter(p =>
           (p.title && p.title.toLowerCase().includes(queryLower)) ||
-          (p.category && p.category.toLowerCase().includes(queryLower))
+          (p.category && p.category.toLowerCase().includes(queryLower)) ||
+          (p.companyName && p.companyName.toLowerCase().includes(queryLower)) ||
+          (p.location && p.location.toLowerCase().includes(queryLower))
         );
       }
 
-      const total = q ? finalData.length : (res.data.total ?? finalData.length);
+      finalData = applyRecordFilters(finalData, filters);
+      const total = finalData.length;
       const paginated = finalData.slice(cursor, cursor + limit);
 
       return {
