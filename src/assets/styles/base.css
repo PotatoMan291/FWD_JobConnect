@@ -13,12 +13,37 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 150ms ease, color 150ms ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 234, 167, 0.8) rgba(15, 23, 42, 0.12);
 }
 
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 234, 167, 0.8) rgba(15, 23, 42, 0.12);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 234, 167, 0.8) rgba(15, 23, 42, 0.12);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 245, 193, 0.92), rgba(255, 225, 124, 0.8));
+  border-radius: 999px;
+  border: 2px solid rgba(15, 23, 42, 0.12);
 }
 
 h1, h2, h3, h4, h5, h6 {

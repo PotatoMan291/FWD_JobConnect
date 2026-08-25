@@ -1,4 +1,7 @@
 import { candidatosService, normalizeCandidate } from '../services/candidatos-service.js';
+import { openModal, closeModal } from './modal.js';
+import { showToast } from './toast.js';
+import { bloquearScroll, desbloquearScroll } from '../utils/scroll-lock.js';
 import { icons } from '../assets/icons/icons.js';
 
 let activeOverlay = null;
@@ -33,9 +36,25 @@ function statusClass(status) {
 function avatarMarkup(candidate) {
   const initials = candidate.fullName.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?';
   if (isSafeUrl(candidate.image)) {
-    return `<img class="candidate-profile-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}">`;
+    return `<img class="candidate-profile-avatar" src="${escapeHTML(candidate.image)}" alt="Foto de ${escapeHTML(candidate.fullName)}" data-fallback-initials="${escapeHTML(initials)}">`;
   }
   return `<div class="candidate-profile-avatar candidate-profile-initials" aria-hidden="true">${escapeHTML(initials)}</div>`;
+}
+
+function localAvatarUrl(initials) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144"><rect width="144" height="144" rx="72" fill="#DCEBE7"/><text x="72" y="82" text-anchor="middle" dominant-baseline="middle" fill="#1F5C4F" font-family="sans-serif" font-size="42" font-weight="700">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function bindProfileAvatarFallback(container, candidate) {
+  const image = container.querySelector('.candidate-profile-avatar[data-fallback-initials]');
+  if (!image) return;
+  image.addEventListener('error', () => {
+    const initials = candidate.fullName.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?';
+    image.onerror = null;
+    image.src = localAvatarUrl(initials);
+    image.removeAttribute('data-fallback-initials');
+  }, { once: true });
 }
 
 function infoItem(label, value, extraClass = '') {
@@ -45,6 +64,112 @@ function infoItem(label, value, extraClass = '') {
 function listMarkup(items, renderer, emptyText) {
   if (!items.length) return `<p class="candidate-profile-empty">${escapeHTML(emptyText)}</p>`;
   return `<div class="candidate-profile-timeline">${items.map(renderer).join('')}</div>`;
+}
+
+function openInterviewScheduler(candidate) {
+  const today = new Date();
+  const twoDaysLater = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const minDate = today.toISOString().split('T')[0];
+  const defaultDate = twoDaysLater.toISOString().split('T')[0];
+
+  const modal = openModal({
+    title: 'Agendar entrevista',
+    bodyHTML: `
+      <div style="display:grid; gap: 1.1rem; min-height: 360px; width: min(100%, 760px);">
+        <div style="display:flex; align-items:center; justify-content: space-between; gap:0.75rem; flex-wrap: wrap;">
+          <div>
+            <div style="font-size:0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(100,116,139,0.9);">Candidato</div>
+            <h3 style="margin:0.2rem 0 0; font-size: clamp(1.4rem, 2vw, 2rem); color:#0f172a;">${escapeHTML(candidate.fullName || 'Candidato')}</h3>
+          </div>
+          <button class="btn btn-secondary interview-teams-btn" type="button" style="background: linear-gradient(135deg, #e5d5a8, #d8bd68); color: #101827; border-color: transparent;">Invitar por Teams</button>
+        </div>
+
+        <div style="display:grid; gap: 1rem; align-content: start;">
+          <div style="padding: 0.9rem 1rem; border-radius: 14px; background: linear-gradient(180deg, #f8fafc, #eef2ff); border: 1px solid rgba(148,163,184,0.3);">
+            <div style="font-size:0.72rem; text-transform: uppercase; letter-spacing:0.08em; color: rgba(71,85,105,0.9); margin-bottom:0.3rem;">Reunión</div>
+            <div style="font-weight:800; font-size: 1.25rem; color:#0f172a;">Entrevista técnica</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+            <label style="display:grid; gap: 0.45rem; font-weight: 600; color: #0f172a;">
+              <span style="font-size:0.8rem; color: rgba(71,85,105,0.9);">Fecha</span>
+              <input type="date" id="interview-date" value="${defaultDate}" min="${minDate}" required style="padding:0.9rem 1rem; border-radius:12px; border:1px solid rgba(148,163,184,0.4); background: #ffffff; color:#0f172a; box-shadow: inset 0 1px 2px rgba(15,23,42,0.04);">
+            </label>
+
+            <label style="display:grid; gap: 0.45rem; font-weight: 600; color: #0f172a;">
+              <span style="font-size:0.8rem; color: rgba(71,85,105,0.9);">Hora</span>
+              <input type="time" id="interview-time" value="10:00" required style="padding:0.9rem 1rem; border-radius:12px; border:1px solid rgba(148,163,184,0.4); background: #ffffff; color:#0f172a; box-shadow: inset 0 1px 2px rgba(15,23,42,0.04);">
+            </label>
+          </div>
+
+          <label style="display:grid; gap: 0.45rem; font-weight: 600; color: #0f172a;">
+            <span style="font-size:0.8rem; color: rgba(71,85,105,0.9);">Plataforma</span>
+            <select id="interview-platform" style="padding:0.9rem 1rem; border-radius:12px; border:1px solid rgba(148,163,184,0.4); background: #ffffff; color:#0f172a; box-shadow: inset 0 1px 2px rgba(15,23,42,0.04);">
+              <option selected>Microsoft Teams</option>
+              <option>Google Meet</option>
+              <option>Zoom</option>
+            </select>
+          </label>
+
+          <div style="padding:0.9rem 1rem; border-radius:12px; background: #f8fafc; border:1px solid rgba(148,163,184,0.25); color: #0f172a;">
+            <div style="font-size:0.72rem; text-transform: uppercase; letter-spacing:0.08em; color: rgba(71,85,105,0.9); margin-bottom:0.45rem;">Contacto</div>
+            <div style="font-weight:600;">${escapeHTML(candidate.email || 'correo no disponible')}</div>
+          </div>
+        </div>
+      </div>
+    `,
+    footerHTML: `
+      <button class="btn btn-primary interview-submit-btn">Guardar cita</button>
+      <button class="btn btn-secondary interview-cancel-btn">Cancelar</button>
+    `
+  });
+
+  const cancelBtn = modal.querySelector('.interview-cancel-btn');
+  if (cancelBtn) cancelBtn.addEventListener('click', () => closeModal());
+
+  const teamsBtn = modal.querySelector('.interview-teams-btn');
+  if (teamsBtn) {
+    teamsBtn.addEventListener('click', () => {
+      const platformSelect = modal.querySelector('#interview-platform');
+      if (platformSelect) platformSelect.value = 'Microsoft Teams';
+      showToast('Se preparó la invitación para Microsoft Teams.', 'success');
+    });
+  }
+
+  const submitBtn = modal.querySelector('.interview-submit-btn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      const dateInput = modal.querySelector('#interview-date');
+      const timeInput = modal.querySelector('#interview-time');
+      const platformSelect = modal.querySelector('#interview-platform');
+
+      if (!dateInput.value || !timeInput.value) {
+        showToast('Selecciona la fecha y la hora para la entrevista.', 'error');
+        return;
+      }
+
+      const meetingDate = new Date(`${dateInput.value}T${timeInput.value}:00`);
+      const formattedDate = new Intl.DateTimeFormat('es-ES', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(meetingDate);
+
+      const stored = JSON.parse(localStorage.getItem('jobconnect_interviews') || '[]');
+      stored.push({
+        id: Date.now(),
+        candidateId: candidate.id,
+        candidateName: candidate.fullName,
+        date: dateInput.value,
+        time: timeInput.value,
+        platform: platformSelect.value,
+        scheduledAt: new Date().toISOString()
+      });
+      localStorage.setItem('jobconnect_interviews', JSON.stringify(stored));
+
+      closeModal();
+      showToast(`Entrevista agendada para ${formattedDate} en ${platformSelect.value}.`, 'success');
+    });
+  }
 }
 
 function profileMarkup(candidate) {
@@ -126,7 +251,7 @@ function profileMarkup(candidate) {
         <h3>Acciones de reclutamiento</h3>
         <div class="candidate-profile-actions">
           ${hasEmail ? `<a class="btn btn-primary" href="mailto:${escapeHTML(candidate.email)}">Contactar</a>` : '<button class="btn btn-primary" disabled>Contactar</button>'}
-          <button class="btn btn-secondary" disabled title="La programación se gestiona desde Entrevistas">Programar entrevista</button>
+          <button class="btn btn-secondary candidate-profile-schedule-btn">Programar entrevista</button>
           ${hasLinkedIn ? `<a class="btn btn-secondary" href="${escapeHTML(candidate.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Ver LinkedIn</a>` : '<button class="btn btn-secondary" disabled>LinkedIn no disponible</button>'}
           <button class="btn btn-secondary candidate-profile-edit-btn">Editar candidato</button>
         </div>
@@ -142,6 +267,7 @@ function closeCandidateProfile() {
   const overlay = activeOverlay;
   activeOverlay = null;
   requestVersion += 1;
+  desbloquearScroll();
   if (overlay) overlay.remove();
   if (focusOrigin && document.contains(focusOrigin)) focusOrigin.focus();
   focusOrigin = null;
@@ -160,6 +286,7 @@ export function openCandidateProfile({ candidateId, candidate = null, onEdit = n
         <div class="candidate-profile-body">${loadingMarkup()}</div>
       </aside>`;
     document.body.appendChild(activeOverlay);
+    bloquearScroll();
     requestAnimationFrame(() => activeOverlay?.classList.add('open'));
     activeOverlay.querySelector('.candidate-profile-close').addEventListener('click', closeCandidateProfile);
     activeOverlay.addEventListener('click', event => {
@@ -175,10 +302,23 @@ export function openCandidateProfile({ candidateId, candidate = null, onEdit = n
   const renderProfile = profile => {
     if (!activeOverlay || version !== requestVersion) return;
     body.innerHTML = profileMarkup(profile);
-    body.querySelector('.candidate-profile-edit-btn').addEventListener('click', () => {
-      closeCandidateProfile();
-      if (onEdit) onEdit(profile);
-    });
+    bindProfileAvatarFallback(body, profile);
+
+    const scheduleBtn = body.querySelector('.candidate-profile-schedule-btn');
+    if (scheduleBtn) {
+      scheduleBtn.addEventListener('click', () => {
+        closeCandidateProfile();
+        openInterviewScheduler(profile);
+      });
+    }
+
+    const editBtn = body.querySelector('.candidate-profile-edit-btn');
+    if (editBtn) {
+      editBtn.addEventListener('click', () => {
+        closeCandidateProfile();
+        if (onEdit) onEdit(profile);
+      });
+    }
   };
 
   const loadProfile = async () => {

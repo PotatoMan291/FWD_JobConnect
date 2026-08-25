@@ -88,15 +88,15 @@
 
 /* Tema Contrast */
 [data-theme="contrast"] {
-  --color-bg: #0B1220;
-  --color-surface: #0F1830;
-  --color-surface-alt: #152140;
-  --color-border: #2C3B5E;
+  --color-bg: #050810;
+  --color-surface: #0A1020;
+  --color-surface-alt: #111D35;
+  --color-border: #6B83B5;
   --color-ink: #FFFFFF;
-  --color-ink-muted: #C7D0E5;
-  --color-accent: #E8B640;
-  --color-accent-hover: #F5CB6B;
-  --color-accent-soft: #2E2A15;
+  --color-ink-muted: #F0F4FF;
+  --color-accent: #FFD34E;
+  --color-accent-hover: #FFE58A;
+  --color-accent-soft: #403710;
   --color-success: #5FE07E;
   --color-error: #FF6B5E;
   --color-warning: #E8B640;

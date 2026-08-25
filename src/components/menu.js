@@ -46,6 +46,7 @@ export function renderMenu(container, currentUser = null) {
     </nav>
 
     <div class="sidebar-footer">
+      <img class="sidebar-user-avatar" src="${user.image || '/public/favicon.svg'}" alt="Foto de ${user.firstName || user.username || 'Usuario'}">
       <div class="user-info">
         <span class="user-name">${user.firstName || user.username || 'Usuario'} ${user.lastName || ''}</span>
         <span class="user-role">${t(`menu.role.${userRole}`) || userRole}</span>

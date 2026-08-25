@@ -3,12 +3,26 @@ let scrollPosition = 0;
 const wheelOpt = { passive: false };
 const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
+function isScrollableContainer(target, selector) {
+  const element = target instanceof Element ? target.closest(selector) : null;
+  if (!element) return false;
+
+  if (element.scrollHeight > element.clientHeight) {
+    return true;
+  }
+
+  return false;
+}
+
 function preventDefault(e) {
   const modal = document.querySelector('.modal-container');
-  // Permitir scroll si el evento ocurre dentro del modal
-  if (modal && modal.contains(e.target)) {
+  const candidateProfile = document.querySelector('.candidate-profile-panel');
+  const candidateBody = document.querySelector('.candidate-profile-body');
+
+  if ((modal && modal.contains(e.target)) || (candidateProfile && candidateProfile.contains(e.target)) || (candidateBody && candidateBody.contains(e.target))) {
     return;
   }
+
   e.preventDefault();
 }
 
@@ -16,15 +30,17 @@ function preventScrollKeys(e) {
   const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Spacebar'];
   if (keys.includes(e.key)) {
     const modal = document.querySelector('.modal-container');
+    const candidateProfile = document.querySelector('.candidate-profile-panel');
+    const candidateBody = document.querySelector('.candidate-profile-body');
     const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
-    
-    // Si estamos en un input o dentro del modal, no prevenimos
-    if (modal && modal.contains(e.target)) {
+
+    if ((modal && modal.contains(e.target)) || (candidateProfile && candidateProfile.contains(e.target)) || (candidateBody && candidateBody.contains(e.target))) {
       if (isInput) return;
-      // Permitir si el modal tiene scroll interno
-      if (modal.scrollHeight > modal.clientHeight) return;
+      if (isScrollableContainer(e.target, '.modal-container')) return;
+      if (isScrollableContainer(e.target, '.candidate-profile-panel')) return;
+      if (isScrollableContainer(e.target, '.candidate-profile-body')) return;
     }
-    
+
     e.preventDefault();
   }
 }
