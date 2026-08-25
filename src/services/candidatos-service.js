@@ -15,6 +15,15 @@ function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+function normalizeYearsOfExperience(value) {
+  if (typeof value !== 'string') return valueOrFallback(value, '');
+
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  return trimmed.replace(/\b(\d+)\s*an(?:io|o)s\b/gi, '$1 años');
+}
+
 function companyName(company) {
   if (typeof company === 'string') return valueOrFallback(company);
   return valueOrFallback(company?.name);
@@ -47,7 +56,7 @@ export function normalizeCandidate(raw = {}) {
     experience: asArray(raw.experience),
     education: asArray(raw.education),
     skills: asArray(raw.skills),
-    yearsOfExperience: valueOrFallback(raw.yearsOfExperience, ''),
+    yearsOfExperience: normalizeYearsOfExperience(raw.yearsOfExperience),
     availability: valueOrFallback(raw.availability),
     workMode: valueOrFallback(raw.workMode),
     salaryExpectation: valueOrFallback(raw.salaryExpectation),
