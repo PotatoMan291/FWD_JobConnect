@@ -38,6 +38,34 @@ const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const errorDiv = document.getElementById('login-error');
 const submitBtn = document.getElementById('submit-btn');
+const registerToggle = document.getElementById('register-toggle');
+const registerForm = document.getElementById('register-form');
+const registerError = document.getElementById('register-error');
+
+registerToggle.addEventListener('click', () => {
+  const isHidden = registerForm.style.display === 'none';
+  registerForm.style.display = isHidden ? 'block' : 'none';
+  registerToggle.textContent = isHidden ? t('login.backToLogin') : t('login.registerLink');
+  if (isHidden) loginForm.style.display = 'none';
+  else loginForm.style.display = 'block';
+});
+
+registerForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  registerError.style.display = 'none';
+  const result = authService.register({
+    firstName: document.getElementById('register-first-name').value,
+    lastName: document.getElementById('register-last-name').value,
+    email: document.getElementById('register-email').value,
+    username: document.getElementById('register-username').value,
+    password: document.getElementById('register-password').value
+  });
+  if (result.ok) redirectByUserRole(result.user);
+  else {
+    registerError.textContent = result.message;
+    registerError.style.display = 'block';
+  }
+});
 
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();

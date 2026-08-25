@@ -1,9 +1,15 @@
+import { getLanguage } from './i18n.js';
+
+function locale() {
+  return { es: 'es-CR', en: 'en-US', zh: 'zh-CN' }[getLanguage()] || 'es-CR';
+}
+
 export function formatDate(dateString) {
   if (!dateString) return '—';
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat(locale(), {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -15,7 +21,7 @@ export function formatDate(dateString) {
 
 export function formatCurrency(amount, currency = 'USD') {
   if (amount === undefined || amount === null || isNaN(amount)) return '$0.00';
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale(), {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2

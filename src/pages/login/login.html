@@ -27,7 +27,7 @@
         <p data-i18n="login.hero.subtitle">Plataforma integral de administración para reclutamiento ejecutivo, evaluación de perfiles y seguimiento de ofertas laborales.</p>
       </div>
 
-      <div style="font-size: 0.8rem; opacity: 0.8;">
+      <div style="font-size: 0.8rem; opacity: 0.8;" data-i18n="login.copyright">
         © 2026 JobConnect Executive Consultancy. Todos los derechos reservados.
       </div>
     </div>
@@ -63,6 +63,37 @@
 
           <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: var(--space-3);">
             <span data-i18n="login.submit">Iniciar sesión</span>
+          </button>
+        </form>
+
+        <button type="button" id="register-toggle" class="btn btn-secondary" style="width: 100%; margin-top: var(--space-3);" data-i18n="login.registerLink">Crear una cuenta</button>
+
+        <form id="register-form" style="display: none;">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="register-first-name" data-i18n="login.registerFirstName">Nombre</label>
+              <input type="text" id="register-first-name" class="input" required autocomplete="given-name" />
+            </div>
+            <div class="form-group">
+              <label for="register-last-name" data-i18n="login.registerLastName">Apellido</label>
+              <input type="text" id="register-last-name" class="input" required autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="register-email" data-i18n="login.registerEmail">Correo electrónico</label>
+            <input type="email" id="register-email" class="input" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="register-username" data-i18n="login.registerUsername">Usuario</label>
+            <input type="text" id="register-username" class="input" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="register-password" data-i18n="login.registerPassword">Contraseña</label>
+            <input type="password" id="register-password" class="input" minlength="6" required autocomplete="new-password" />
+          </div>
+          <div id="register-error" style="display: none; color: var(--color-error); font-size: var(--fs-small); margin-bottom: var(--space-3);"></div>
+          <button type="submit" id="register-submit-btn" class="btn btn-primary" style="width: 100%; padding: var(--space-3);">
+            <span data-i18n="login.registerSubmit">Registrarse</span>
           </button>
         </form>
 

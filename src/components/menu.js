@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { key: 'dashboard', labelKey: 'menu.dashboard', icon: 'dashboard', path: '/src/pages/dashboard/dashboard.html', roles: ['admin', 'recruiter'] },
   { key: 'candidatos', labelKey: 'menu.candidatos', icon: 'candidatos', path: '/src/pages/candidatos/candidatos.html', roles: ['admin', 'recruiter'] },
   { key: 'vacantes', labelKey: 'menu.vacantes', icon: 'vacantes', path: '/src/pages/vacantes/vacantes.html', roles: ['admin', 'recruiter', 'user'] },
+  { key: 'perfil', labelKey: 'menu.profile', icon: 'candidatos', path: '/src/pages/perfil/perfil.html', roles: ['admin', 'recruiter', 'user'] },
   { key: 'empresas', labelKey: 'menu.empresas', icon: 'empresas', path: '/src/pages/empresas/empresas.html', roles: ['admin', 'recruiter'] },
   { key: 'postulaciones', labelKey: 'menu.postulaciones', icon: 'postulaciones', path: '/src/pages/postulaciones/postulaciones.html', roles: ['admin', 'recruiter', 'user'] },
   { key: 'entrevistas', labelKey: 'menu.entrevistas', icon: 'entrevistas', path: '/src/pages/entrevistas/entrevistas.html', roles: ['admin', 'recruiter'] },
@@ -33,7 +34,7 @@ export function renderMenu(container, currentUser = null) {
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-section-title">Navegación</div>
+      <div class="nav-section-title">${t('menu.navigation')}</div>
       ${allowedItems.map(item => {
         const isActive = currentPath.includes(item.key);
         return `
@@ -46,9 +47,9 @@ export function renderMenu(container, currentUser = null) {
     </nav>
 
     <div class="sidebar-footer">
-      <img class="sidebar-user-avatar" src="${user.image || '/public/favicon.svg'}" alt="Foto de ${user.firstName || user.username || 'Usuario'}">
+      <img class="sidebar-user-avatar" src="${user.image || '/public/favicon.svg'}" alt="${t('menu.user_photo', { name: user.firstName || user.username || t('menu.user.default') })}">
       <div class="user-info">
-        <span class="user-name">${user.firstName || user.username || 'Usuario'} ${user.lastName || ''}</span>
+        <span class="user-name">${user.firstName || user.username || t('menu.user.default')} ${user.lastName || ''}</span>
         <span class="user-role">${t(`menu.role.${userRole}`) || userRole}</span>
       </div>
       <button id="logout-btn" class="btn btn-icon" title="${t('menu.logout')}">
@@ -79,8 +80,10 @@ export function renderMenu(container, currentUser = null) {
     logoutBtn.addEventListener('click', () => authService.logout());
   }
 
-  // Reactivar en caso de cambio de idioma
-  window.addEventListener('languagechange', () => {
-    renderMenu(container, user);
-  });
+  if (!container.dataset.languageChangeBound) {
+    window.addEventListener('languagechange', () => {
+      renderMenu(container, user);
+    });
+    container.dataset.languageChangeBound = 'true';
+  }
 }

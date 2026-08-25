@@ -57,8 +57,8 @@ async function loadData() {
   const columns = [
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#ENT-') },
     { key: 'body', headerKey: 'entrevistas.form.body', render: (val) => `<strong>${truncateText(val, 60)}</strong>` },
-    { key: 'user', headerKey: 'candidatos.title', render: (u) => u ? `${u.fullName || u.username}` : 'Evaluador Senior' },
-    { key: 'postId', headerKey: 'postulaciones.title', isMono: true, render: (pid) => `<span class="badge badge-neutral">Postulación ${formatId(pid, '#POS-')}</span>` }
+    { key: 'user', headerKey: 'candidatos.title', render: (u) => u ? `${u.fullName || u.username}` : t('entrevistas.evaluator.default') },
+    { key: 'postId', headerKey: 'postulaciones.title', isMono: true, render: (pid) => `<span class="badge badge-neutral">${t('entrevistas.application', { id: formatId(pid, '#POS-') })}</span>` }
   ];
 
   renderTable({

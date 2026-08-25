@@ -5,14 +5,16 @@ export const FONT_SIZES = ['normal', 'large', 'xlarge'];
 
 const DEFAULTS = {
   colorVision: 'none',
-  fontSize: 'normal'
+  fontSize: 'normal',
+  voiceURI: ''
 };
 
 export function getAccessibilitySettings() {
   const saved = storage.get('accessibility', DEFAULTS) || DEFAULTS;
   return {
     colorVision: COLOR_VISION_MODES.includes(saved.colorVision) ? saved.colorVision : DEFAULTS.colorVision,
-    fontSize: FONT_SIZES.includes(saved.fontSize) ? saved.fontSize : DEFAULTS.fontSize
+    fontSize: FONT_SIZES.includes(saved.fontSize) ? saved.fontSize : DEFAULTS.fontSize,
+    voiceURI: typeof saved.voiceURI === 'string' ? saved.voiceURI : DEFAULTS.voiceURI
   };
 }
 
@@ -33,6 +35,13 @@ export function setFontSize(size) {
   current.fontSize = FONT_SIZES.includes(size) ? size : 'normal';
   storage.set('accessibility', current);
   applyAccessibilitySettings(current);
+}
+
+
+export function setSpeechVoice(voiceURI) {
+  const current = getAccessibilitySettings();
+  current.voiceURI = typeof voiceURI === 'string' ? voiceURI : '';
+  storage.set('accessibility', current);
 }
 
 export function initAccessibility() {
