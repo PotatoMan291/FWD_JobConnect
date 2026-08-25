@@ -31,6 +31,15 @@ export function renderThemeSwitcher(container) {
 
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
+
+    // Cierra el selector de idioma antes de abrir/cerrar el selector de tema.
+    document.querySelectorAll('.lang-dropdown-wrapper').forEach(wrapper => {
+      const langMenu = wrapper.querySelector('.lang-dropdown-menu');
+      const langBtn = wrapper.querySelector('#lang-toggle-btn');
+      if (langMenu) langMenu.style.display = 'none';
+      if (langBtn) langBtn.setAttribute('aria-expanded', 'false');
+    });
+
     dropdown.classList.toggle('open');
   });
 
