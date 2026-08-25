@@ -58,7 +58,8 @@ registerForm.addEventListener('submit', (event) => {
     lastName: document.getElementById('register-last-name').value,
     email: document.getElementById('register-email').value,
     username: document.getElementById('register-username').value,
-    password: document.getElementById('register-password').value
+    password: document.getElementById('register-password').value,
+    role: document.getElementById('register-role').value
   });
   if (result.ok) redirectByUserRole(result.user);
   else {

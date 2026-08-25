@@ -641,6 +641,36 @@
   box-shadow: var(--shadow-md);
 }
 
+.job-details-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin: calc(var(--space-4) * -1) calc(var(--space-4) * -1) var(--space-4);
+  padding: var(--space-2) var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.job-details-tab {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.job-details-tab.is-active {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.job-details-panel[hidden] { display: none; }
+
+.job-card-selected {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-soft), var(--shadow-md);
+}
+
 .job-card:active { transform: translateY(0); }
 
 .job-card-media {

@@ -91,6 +91,13 @@
             <label for="register-password" data-i18n="login.registerPassword">Contraseña</label>
             <input type="password" id="register-password" class="input" minlength="6" required autocomplete="new-password" />
           </div>
+          <div class="form-group">
+            <label for="register-role" data-i18n="login.registerRole">¿Qué estás buscando?</label>
+            <select id="register-role" class="input" required>
+              <option value="user" data-i18n="login.roleCandidate">Busco trabajo</option>
+              <option value="recruiter" data-i18n="login.roleRecruiter">Contratador</option>
+            </select>
+          </div>
           <div id="register-error" style="display: none; color: var(--color-error); font-size: var(--fs-small); margin-bottom: var(--space-3);"></div>
           <button type="submit" id="register-submit-btn" class="btn btn-primary" style="width: 100%; padding: var(--space-3);">
             <span data-i18n="login.registerSubmit">Registrarse</span>

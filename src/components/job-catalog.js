@@ -66,15 +66,17 @@ export function formatSalary(job) {
   }
 }
 
-export function renderJobCard(rawJob, { showManageActions = false } = {}) {
+export function renderJobCard(rawJob, { showManageActions = false, selected = false } = {}) {
   const job = normalizeJob(rawJob);
   jobsCache.set(String(job.id), job);
   const saved = isSaved(job);
+  const currentUser = authService.getCurrentUser();
+  const isOwner = currentUser?.role === 'recruiter' && String(job.createdBy) === String(currentUser.id);
   const imageSrc = job.companyImage || FALLBACK_IMAGE;
   const logo = companyLogoMarkup(job);
 
   return `
-    <article class="job-card" tabindex="0" data-job-id="${escapeHTML(job.id)}" aria-label="Ver detalles de ${escapeHTML(job.title)} en ${escapeHTML(job.companyName)}">
+    <article class="job-card ${selected ? 'job-card-selected' : ''}" tabindex="0" data-job-id="${escapeHTML(job.id)}" aria-label="Seleccionar ${escapeHTML(job.title)} en ${escapeHTML(job.companyName)}">
       <div class="job-card-media">
         <img class="job-card-image" src="${escapeHTML(imageSrc)}" alt="${t('job.company.representation', { company: escapeHTML(job.companyName) })}" loading="lazy" data-fallback-src="${FALLBACK_IMAGE}">
         <div class="job-card-media-overlay"></div>
@@ -97,7 +99,7 @@ export function renderJobCard(rawJob, { showManageActions = false } = {}) {
         <p class="job-card-date">${t('job.published_at')}: ${escapeHTML(formatDate(job.publishedAt))}</p>
         <div class="job-card-actions">
           <button class="btn btn-secondary" type="button" data-details-job="${escapeHTML(job.id)}">${t('job.details')}</button>
-          <button class="btn btn-primary" type="button" data-apply-job="${escapeHTML(job.id)}">${t('job.apply')}</button>
+          ${isOwner ? '<button class="btn btn-secondary" type="button" disabled>No puedes aplicar</button>' : `<button class="btn btn-primary" type="button" data-apply-job="${escapeHTML(job.id)}">Aplicar ahora</button>`}
         </div>
         ${showManageActions ? `<div class="job-card-manage-actions"><button class="job-card-text-action" type="button" data-edit-job="${escapeHTML(job.id)}">${t('job.edit')}</button><button class="job-card-text-action job-card-delete-action" type="button" data-delete-job="${escapeHTML(job.id)}">${t('job.delete')}</button></div>` : ''}
       </div>
@@ -109,7 +111,7 @@ function renderState(container, type, message, onRetry) {
   container.querySelector('.job-catalog-retry')?.addEventListener('click', onRetry);
 }
 
-function bindCatalogEvents(container, { onEdit = null, onDelete = null } = {}) {
+function bindCatalogEvents(container, { onEdit = null, onDelete = null, onSelect = null } = {}) {
   container.querySelectorAll('.job-card-image, .job-card-logo-image').forEach(image => {
     image.addEventListener('error', () => {
       const fallback = image.dataset.fallbackSrc;
@@ -161,18 +163,22 @@ function bindCatalogEvents(container, { onEdit = null, onDelete = null } = {}) {
   container.querySelectorAll('.job-card').forEach(card => {
     const showDetails = () => openJobDetails(card.dataset.jobId);
     card.addEventListener('click', event => {
-      if (!event.target.closest('button, a')) showDetails();
+      if (!event.target.closest('button, a')) {
+        if (onSelect) onSelect(card.dataset.jobId);
+        else showDetails();
+      }
     });
     card.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        showDetails();
+        if (onSelect) onSelect(card.dataset.jobId);
+        else showDetails();
       }
     });
   });
 }
 
-export function renderJobCatalog({ container, jobs = [], isLoading = false, error = null, onRetry = null, onEdit = null, onDelete = null, emptyMessage = t('job.empty.filters') }) {
+export function renderJobCatalog({ container, jobs = [], isLoading = false, error = null, onRetry = null, onEdit = null, onDelete = null, onSelect = null, selectedJobId = null, emptyMessage = t('job.empty.filters') }) {
   if (!container) return;
   if (isLoading) {
     container.innerHTML = `<div class="job-catalog job-catalog-loading" aria-live="polite">${Array.from({ length: 4 }, () => '<div class="job-card-skeleton"><span class="skeleton"></span><span class="skeleton"></span><span class="skeleton"></span><span class="skeleton"></span></div>').join('')}</div>`;
@@ -186,8 +192,8 @@ export function renderJobCatalog({ container, jobs = [], isLoading = false, erro
     renderState(container, 'empty', emptyMessage);
     return;
   }
-  container.innerHTML = `<div class="job-catalog">${jobs.map(job => renderJobCard(job, { showManageActions: Boolean(onEdit || onDelete) })).join('')}</div>`;
-  bindCatalogEvents(container, { onEdit, onDelete });
+  container.innerHTML = `<div class="job-catalog">${jobs.map(job => renderJobCard(job, { showManageActions: Boolean(onEdit || onDelete), selected: String(job.id) === String(selectedJobId) })).join('')}</div>`;
+  bindCatalogEvents(container, { onEdit, onDelete, onSelect });
 }
 
 export async function openJobDetails(jobId) {
@@ -198,19 +204,44 @@ export async function openJobDetails(jobId) {
   });
   overlay.querySelector('.modal-container').classList.add('job-details-modal');
   const body = overlay.querySelector('.modal-body');
+  const currentUser = authService.getCurrentUser();
 
   const renderDetails = job => {
+    const isOwner = currentUser?.role === 'recruiter' && String(job.createdBy) === String(currentUser.id);
     body.innerHTML = `
-      <div class="job-details-header"><div class="job-card-logo">${companyLogoMarkup(job)}</div><div><p class="job-card-company">${escapeHTML(job.companyName)}</p><h3>${escapeHTML(job.title)}</h3><p class="job-card-salary">${escapeHTML(formatSalary(job))}</p></div></div>
-      <div class="job-details-meta"><span>${escapeHTML(job.location)}</span><span>${escapeHTML(job.modality)}</span><span>${escapeHTML(job.contractType)}</span><span>${t('job.closing_date')}: ${escapeHTML(formatDate(job.closingDate))}</span></div>
-      <section><h4>${t('job.description.title')}</h4><p>${escapeHTML(job.description)}</p></section>
-      <section><h4>${t('job.responsibilities.title')}</h4>${listMarkup(job.responsibilities, t('job.responsibilities.tbd'))}</section>
-      <section><h4>${t('job.requirements.title')}</h4>${listMarkup(job.requirements, t('job.requirements.tbd'))}</section>
-      <section><h4>${t('job.benefits.title')}</h4>${listMarkup(job.benefits, t('job.benefits.tbd'))}</section>
-      <section><h4>${t('job.company.title')}</h4><p>${escapeHTML(job.companyDescription || t('job.company.tbd'))}</p></section>
-      <div class="job-details-footer"><button class="btn btn-secondary job-details-close">${t('modal.close')}</button><button class="btn btn-primary job-details-apply">${t('job.apply')}</button></div>`;
+      <div class="job-details-tabs" role="tablist" aria-label="Información de la vacante">
+        <button type="button" class="job-details-tab is-active" role="tab" aria-selected="true" data-job-tab="summary">Vacante</button>
+        <button type="button" class="job-details-tab" role="tab" aria-selected="false" data-job-tab="details">Detalle</button>
+      </div>
+      <section class="job-details-panel is-active" data-job-panel="summary" role="tabpanel">
+        <div class="job-details-header"><div class="job-card-logo">${companyLogoMarkup(job)}</div><div><p class="job-card-company">${escapeHTML(job.companyName)}</p><h3>${escapeHTML(job.title)}</h3><p class="job-card-salary">${escapeHTML(formatSalary(job))}</p></div></div>
+        <div class="job-details-meta"><span>${escapeHTML(job.location)}</span><span>${escapeHTML(job.modality)}</span><span>${escapeHTML(job.contractType)}</span><span>Cierre: ${escapeHTML(formatDate(job.closingDate))}</span></div>
+        <section><h4>Resumen</h4><p>${escapeHTML(job.shortDescription)}</p></section>
+        <section><h4>Categoría</h4><p>${escapeHTML(job.category)} · ${escapeHTML(job.experienceLevel)}</p></section>
+      </section>
+      <section class="job-details-panel" data-job-panel="details" role="tabpanel" hidden>
+        <section><h4>Descripción</h4><p>${escapeHTML(job.description)}</p></section>
+        <section><h4>Responsabilidades</h4>${listMarkup(job.responsibilities, 'Responsabilidades no disponibles.')}</section>
+        <section><h4>Requisitos</h4>${listMarkup(job.requirements, 'Requisitos no disponibles.')}</section>
+        <section><h4>Beneficios</h4>${listMarkup(job.benefits, 'Beneficios no disponibles.')}</section>
+        <section><h4>Información de la empresa</h4><p>${escapeHTML(job.companyDescription || 'Información de la empresa no disponible.')}</p></section>
+      </section>
+      <div class="job-details-footer"><button class="btn btn-secondary job-details-close">Cerrar</button>${isOwner ? '<button class="btn btn-secondary" disabled>No puedes aplicar a tu propia vacante</button>' : '<button class="btn btn-primary job-details-apply">Aplicar ahora</button>'}</div>`;
     body.querySelector('.job-details-close').addEventListener('click', closeModal);
-    body.querySelector('.job-details-apply').addEventListener('click', () => applyToJob(job.id));
+    body.querySelector('.job-details-apply')?.addEventListener('click', () => applyToJob(job.id));
+    body.querySelectorAll('[data-job-tab]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        body.querySelectorAll('[data-job-tab]').forEach(item => {
+          const active = item === tab;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-selected', String(active));
+        });
+        body.querySelectorAll('[data-job-panel]').forEach(panel => {
+          panel.hidden = panel.dataset.jobPanel !== tab.dataset.jobTab;
+          panel.classList.toggle('is-active', !panel.hidden);
+        });
+      });
+    });
   };
 
   if (cachedJob) renderDetails(cachedJob);
@@ -237,12 +268,18 @@ export async function applyToJob(jobId) {
   const companyStr = job ? job.companyName : t('job.company.default');
   const user = authService.getCurrentUser() || { firstName: t('job.applicant.default') };
 
+  if (job?.createdBy && user.role === 'recruiter' && String(job.createdBy) === String(user.id)) {
+    showToast('No puedes aplicar a una vacante que tú publicaste.', 'error');
+    return;
+  }
+
   showToast(t('job.apply.progress'), 'info');
 
   const createRes = await postulacionesService.create({
     title: `${t('job.apply.title_prefix')} ${titleStr}`,
     body: `${t('job.apply.body', { user: (user.firstName || user.username || t('job.applicant.default')) + ' ' + (user.lastName || ''), role: titleStr, company: companyStr })}`,
-    userId: user.id || 1
+    userId: user.id || 1,
+    vacancyId: Number(jobId) || jobId
   });
 
   if (createRes && createRes.ok) {

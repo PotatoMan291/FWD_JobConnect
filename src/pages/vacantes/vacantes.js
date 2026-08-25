@@ -47,6 +47,11 @@ let currentFilters = {};
 let aiRankings = new Map();
 let aiEnabled = false;
 const currentUser = authService.getCurrentUser();
+const canManageVacancies = ['admin', 'recruiter'].includes(currentUser?.role);
+
+if (!canManageVacancies && createBtn) {
+  createBtn.hidden = true;
+}
 
 async function loadData() {
   renderJobCatalog({ container: catalogContainer, isLoading: true });
@@ -78,9 +83,9 @@ async function loadData() {
   renderJobCatalog({
     container: catalogContainer,
     jobs,
-    onEdit: item => openVacanteForm({ item, onSave: loadData }),
-    onDelete: item => openDeleteConfirmation(item.id, item),
-    emptyMessage: t('vacantes.empty.search')
+    onEdit: canManageVacancies ? item => openVacanteForm({ item, onSave: loadData }) : null,
+    onDelete: canManageVacancies ? item => openDeleteConfirmation(item.id, item) : null,
+  emptyMessage: t('vacantes.empty.search')
   });
 
   renderPagination({
@@ -196,9 +201,11 @@ createFilterLayout({
   }
 });
 
-createBtn.addEventListener('click', () => {
-  openVacanteForm({ onSave: loadData });
-});
+if (canManageVacancies && createBtn) {
+  createBtn.addEventListener('click', () => {
+    openVacanteForm({ onSave: loadData });
+  });
+}
 
 loadData();
 window.addEventListener('languagechange', loadData);

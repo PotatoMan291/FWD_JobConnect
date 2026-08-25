@@ -41,15 +41,14 @@ if (mobileBtn) {
 const filterContainer = document.getElementById('filter-container');
 const tableContainer = document.getElementById('table-container');
 const paginationContainer = document.getElementById('pagination-container');
-const createBtn = document.getElementById('create-candidato-btn');
 
 let currentCursor = 0;
 const currentLimit = 10;
 let currentSearch = '';
 let currentFilters = {};
-let vacancyOptions = [];
 let aiRankings = new Map();
 let aiEnabled = false;
+let vacancyOptions = [];
 const currentUser = authService.getCurrentUser();
 const canSelectVacancy = ['admin', 'recruiter'].includes(currentUser?.role);
 
@@ -271,9 +270,5 @@ async function loadVacancyOptions() {
 }
 
 if (canSelectVacancy) loadVacancyOptions();
-
-createBtn.addEventListener('click', () => {
-  openCandidatoForm({ onSave: loadData });
-});
 
 loadData();
