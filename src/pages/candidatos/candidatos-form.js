@@ -10,7 +10,7 @@ export function openCandidatoForm({ item = null, onSave }) {
 
   const bodyHTML = `
     <form id="candidato-form">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+      <div class="form-grid-2">
         <div class="form-group">
           <label for="firstName" data-i18n="candidatos.form.name">${t('candidatos.form.name')}</label>
           <input type="text" id="firstName" class="input" value="${item ? item.firstName || '' : ''}" required />

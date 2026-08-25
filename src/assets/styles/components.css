@@ -993,3 +993,155 @@
     flex: 1 1 100%;
   }
 }
+
+
+/* Responsive refinements */
+.dashboard-recent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  gap: var(--space-6);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.filter-select-wrapper {
+  min-width: 160px;
+}
+
+.table-container {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+.table {
+  min-width: 680px;
+}
+
+@media (max-width: 768px) {
+  .filter-select-wrapper {
+    min-width: min(160px, 100%);
+    flex: 1 1 160px;
+  }
+
+  .pagination-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .pagination-controls {
+    width: 100%;
+  }
+
+  .pagination-controls .btn {
+    flex: 1 1 0;
+  }
+
+  .modal-container {
+    width: calc(100% - (2 * var(--space-4)));
+    max-height: calc(100vh - (2 * var(--space-4)));
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .toast-container {
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+  }
+
+  .toast {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-banner-content {
+    right: var(--space-4);
+    max-width: none;
+  }
+
+  .filter-inputs > * {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-bar > .btn {
+    width: 100%;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .table th,
+  .table td {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .modal-footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .job-card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-profile-header {
+    padding-inline: var(--space-4);
+  }
+
+  .accessibility-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .accessibility-dialog {
+    width: 100%;
+    max-height: 92vh;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .btn {
+    white-space: normal;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+  }
+
+  .pagination-controls .btn {
+    width: 100%;
+  }
+
+  .section-banner,
+  .section-banner-image {
+    min-height: 145px;
+    height: 145px;
+  }
+
+  .section-banner-content p {
+    font-size: 0.82rem;
+  }
+}

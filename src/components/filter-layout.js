@@ -34,7 +34,7 @@ export function createFilterLayout({
           ` : ''}
 
           ${selectFields.map(f => `
-            <div style="min-width: 160px;">
+            <div class="filter-select-wrapper">
               <select id="filter-${f.key}" class="select">
                 <option value="">${f.label ? (t(f.label) || f.label) : t('filter.all')}</option>
                 ${f.options.map(opt => `
