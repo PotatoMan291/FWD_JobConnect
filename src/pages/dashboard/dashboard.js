@@ -76,10 +76,10 @@ async function loadDashboardData() {
   renderTable({
     container: document.getElementById('recent-vacantes-table'),
     columns: [
-      { key: 'id', header: 'ID', isMono: true, render: (id) => formatId(id, '#VAC-') },
-      { key: 'title', header: 'Vacante' },
-      { key: 'price', header: 'Rango Salarial', isMono: true, render: (val) => formatCurrency(val) },
-      { key: 'category', header: 'Área', render: (val) => `<span class="badge badge-neutral">${val}</span>` }
+      { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#VAC-') },
+      { key: 'title', headerKey: 'dashboard.table.vacante.title' },
+      { key: 'price', headerKey: 'dashboard.table.vacante.salary', isMono: true, render: (val) => formatCurrency(val) },
+      { key: 'category', headerKey: 'dashboard.table.vacante.area', render: (val) => `<span class="badge badge-neutral">${val}</span>` }
     ],
     data: vacantesRes.data || [],
     isLoading: false,

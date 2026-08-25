@@ -38,7 +38,7 @@ export function openPostulacionForm({ item = null, onSave }) {
       body: overlay.querySelector('#body').value.trim(),
       userId: item ? item.userId : 1
     };
-
+    
     let res;
     if (isEdit) {
       // PATCH (único método de actualización soportado en /posts según tabla)

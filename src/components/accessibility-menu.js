@@ -27,6 +27,11 @@ export function renderAccessibilityMenu(container) {
   if (!container) return;
   const settings = getAccessibilitySettings();
 
+  if (!container.dataset.languageChangeBound) {
+    window.addEventListener('languagechange', () => renderAccessibilityMenu(container));
+    container.dataset.languageChangeBound = 'true';
+  }
+
   container.innerHTML = `
     <button class="btn btn-secondary btn-icon" id="accessibility-btn" type="button"
       aria-label="${t('accessibility.open')}" title="${t('accessibility.open')}" aria-haspopup="dialog">

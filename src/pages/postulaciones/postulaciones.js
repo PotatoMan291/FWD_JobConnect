@@ -62,7 +62,7 @@ async function loadData() {
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#POS-') },
     { key: 'title', headerKey: 'postulaciones.form.title', render: (val) => `<strong>${truncateText(val, 45)}</strong>` },
     { key: 'body', headerKey: 'postulaciones.form.body', render: (val) => truncateText(val, 60) },
-    { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${val || 0} Vistas</span>` }
+    { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${t('postulaciones.views', { count: val || 0 })}</span>` }
   ];
 
   renderTable({

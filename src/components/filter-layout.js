@@ -96,5 +96,8 @@ export function createFilterLayout({
 
   renderFilterContent();
 
-  window.addEventListener('languagechange', renderFilterContent);
+  if (!container.dataset.languageChangeBound) {
+    window.addEventListener('languagechange', renderFilterContent);
+    container.dataset.languageChangeBound = 'true';
+  }
 }

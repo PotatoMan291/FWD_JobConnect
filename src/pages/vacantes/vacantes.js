@@ -64,7 +64,7 @@ async function loadData() {
     jobs: res.data,
     onEdit: item => openVacanteForm({ item, onSave: loadData }),
     onDelete: item => openDeleteConfirmation(item.id, item),
-    emptyMessage: 'No hay vacantes que coincidan con la búsqueda.'
+    emptyMessage: t('vacantes.empty.search')
   });
 
   renderPagination({
@@ -118,3 +118,4 @@ createBtn.addEventListener('click', () => {
 });
 
 loadData();
+window.addEventListener('languagechange', loadData);

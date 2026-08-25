@@ -90,9 +90,9 @@ async function loadData() {
   }
 
   const columns = [
-    { key: 'image', header: 'Foto', render: (value, row) => candidateAvatar(row) },
+    { key: 'image', headerKey: 'candidatos.photo', render: (value, row) => candidateAvatar(row) },
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#CAN-') },
-    { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="Ver perfil de ${row.firstName} ${row.lastName}">${row.firstName} ${row.lastName}</button>` },
+    { key: 'firstName', headerKey: 'candidatos.form.name', render: (val, row) => `<button class="candidate-profile-trigger" type="button" data-candidate-id="${row.id}" aria-label="${t('candidatos.profile.view', { name: `${row.firstName} ${row.lastName}` })}">${row.firstName} ${row.lastName}</button>` },
     { key: 'email', headerKey: 'candidatos.form.email' },
     { key: 'phone', headerKey: 'candidatos.form.phone', isMono: true },
     { key: 'company', headerKey: 'candidatos.form.company', render: (val) => typeof val === 'string' ? val : (val && val.name ? val.name : '—') }
