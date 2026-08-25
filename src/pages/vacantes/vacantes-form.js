@@ -19,7 +19,7 @@ export function openVacanteForm({ item = null, onSave }) {
         <input type="text" id="category" class="input" value="${item ? item.category || '' : ''}" required />
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+      <div class="form-grid-2">
         <div class="form-group">
           <label for="price" data-i18n="vacantes.form.price">${t('vacantes.form.price')}</label>
           <input type="number" id="price" class="input" value="${item ? item.price || '' : ''}" step="100" required />

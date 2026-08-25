@@ -14,7 +14,7 @@ export function openEmpresaForm({ item = null, onSave }) {
         <input type="number" id="userId" class="input" value="${item ? item.userId || '1' : '1'}" required />
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+      <div class="form-grid-2">
         <div class="form-group">
           <label for="total" data-i18n="empresas.form.total">${t('empresas.form.total')}</label>
           <input type="number" id="total" class="input" value="${item ? item.total || '5000' : '5000'}" step="100" required />
