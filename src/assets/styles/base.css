@@ -81,3 +81,16 @@ a:hover {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* Etiquetas fuertes (strong) según el tema */
+html[data-theme="light"] strong,
+html[data-theme="sepia"] strong {
+  color: #000;
+  font-weight: 700;
+}
+
+html[data-theme="dark"] strong,
+html[data-theme="contrast"] strong {
+  color: #fff;
+  font-weight: 700;
+}
