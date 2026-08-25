@@ -15,9 +15,9 @@ export function renderThemeSwitcher(container) {
       </button>
       <div class="switcher-menu">
         ${THEMES.map(theme => `
-          <button class="switcher-item" data-theme="${theme.id}">
-            <span class="theme-dot" style="background-color: ${theme.color};"></span>
-            <span>${theme.name}</span>
+          <button class="switcher-item ${theme.id === currentTheme ? 'is-active' : ''}" data-theme="${theme.id}" aria-pressed="${theme.id === currentTheme}">
+            <span class="theme-dot" style="--theme-dot-color: ${theme.color}; background-color: ${theme.color};"></span>
+            <span class="theme-name">${theme.name}</span>
           </button>
         `).join('')}
       </div>
@@ -51,6 +51,10 @@ export function renderThemeSwitcher(container) {
       dropdown.classList.remove('open');
       renderThemeSwitcher(container);
     });
+  });
+
+  container.querySelectorAll('.theme-dot').forEach(dot => {
+    dot.title = `Color del tema ${dot.closest('.switcher-item')?.querySelector('.theme-name')?.textContent || ''}`;
   });
 
   document.addEventListener('click', () => {
