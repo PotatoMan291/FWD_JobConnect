@@ -655,7 +655,7 @@
 .job-details-meta span:not(:last-child)::after { content: '·'; margin-left: var(--space-3); }
 .job-card-category { margin-bottom: var(--space-3); }
 .job-card-salary { color: var(--color-accent); font-family: var(--font-mono); font-size: var(--fs-small); font-weight: 600; overflow-wrap: anywhere; }
-.job-card-description { display: -webkit-box; overflow: hidden; min-height: 4.5em; margin: var(--space-3) 0; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.job-card-description { display: -webkit-box; overflow: hidden; min-height: 4.5em; margin: var(--space-3) 0; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; }
 .job-card-skills { display: flex; flex-wrap: wrap; gap: var(--space-1); min-height: 28px; }
 .job-card-date { margin-top: var(--space-3); }
 .job-card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-top: auto; padding-top: var(--space-4); }
