@@ -1,4 +1,4 @@
-import { getAccessibilitySettings, setColorVision, setFontSize } from '../utils/accessibility.js';
+import { getAccessibilitySettings, setColorVision, setFontSize, setSpeechVoice } from '../utils/accessibility.js';
 import { t } from '../utils/i18n.js';
 
 const accessibilityIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4" r="2"></circle><path d="M5 8h14"></path><path d="M12 6v6"></path><path d="m8 22 4-10 4 10"></path><path d="m7 14 5-2 5 2"></path></svg>`;
@@ -86,6 +86,13 @@ export function renderAccessibilityMenu(container) {
           <section class="accessibility-section" aria-labelledby="tts-title">
             <h4 id="tts-title">${t('accessibility.tts')}</h4>
             <p class="accessibility-help">${t('accessibility.ttsHelp')}</p>
+            <label class="tts-voice-field" for="tts-voice">
+              <span>${t('accessibility.voice')}</span>
+              <select id="tts-voice" class="tts-voice-select" aria-describedby="tts-voice-help">
+                <option value="">${t('accessibility.voiceLoading')}</option>
+              </select>
+            </label>
+            <p id="tts-voice-help" class="accessibility-help tts-voice-help">${t('accessibility.voiceHelp')}</p>
             <div class="tts-controls">
               <button class="btn btn-primary" id="tts-read" type="button">${speakerIcon}<span>${t('accessibility.read')}</span></button>
               <button class="btn btn-secondary" id="tts-pause" type="button">${t('accessibility.pause')}</button>
@@ -101,6 +108,7 @@ export function renderAccessibilityMenu(container) {
   const openBtn = container.querySelector('#accessibility-btn');
   const overlay = container.querySelector('#accessibility-overlay');
   const closeBtn = container.querySelector('#accessibility-close');
+  const voiceSelect = container.querySelector('#tts-voice');
   const readBtn = container.querySelector('#tts-read');
   const pauseBtn = container.querySelector('#tts-pause');
   const stopBtn = container.querySelector('#tts-stop');
@@ -142,6 +150,54 @@ export function renderAccessibilityMenu(container) {
     stopBtn.disabled = true;
     status.textContent = t('accessibility.ttsUnsupported');
   } else {
+    const getPreferredLanguage = () => document.documentElement.lang === 'en' ? 'en' : 'es';
+
+    const populateVoices = () => {
+      const allVoices = window.speechSynthesis.getVoices();
+      const lang = getPreferredLanguage();
+      const matchingVoices = allVoices.filter(voice => voice.lang?.toLowerCase().startsWith(lang));
+      const voices = matchingVoices.length ? matchingVoices : allVoices;
+      const currentSettings = getAccessibilitySettings();
+
+      voiceSelect.innerHTML = '';
+
+      if (!voices.length) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = t('accessibility.voiceDefault');
+        voiceSelect.appendChild(option);
+        voiceSelect.disabled = true;
+        return;
+      }
+
+      voiceSelect.disabled = false;
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = t('accessibility.voiceDefault');
+      voiceSelect.appendChild(defaultOption);
+
+      voices.forEach(voice => {
+        const option = document.createElement('option');
+        option.value = voice.voiceURI;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+
+      const savedVoiceAvailable = voices.some(voice => voice.voiceURI === currentSettings.voiceURI);
+      voiceSelect.value = savedVoiceAvailable ? currentSettings.voiceURI : '';
+    };
+
+    populateVoices();
+    window.speechSynthesis.addEventListener?.('voiceschanged', populateVoices);
+
+    voiceSelect.addEventListener('change', () => {
+      setSpeechVoice(voiceSelect.value);
+      stopSpeech();
+      status.textContent = voiceSelect.value
+        ? t('accessibility.voiceChanged')
+        : t('accessibility.voiceDefaultSelected');
+    });
+
     readBtn.addEventListener('click', () => {
       stopSpeech();
       const text = getReadableText();
@@ -152,6 +208,12 @@ export function renderAccessibilityMenu(container) {
 
       utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = document.documentElement.lang === 'en' ? 'en-US' : 'es-ES';
+      const selectedVoiceURI = getAccessibilitySettings().voiceURI;
+      const selectedVoice = window.speechSynthesis.getVoices().find(voice => voice.voiceURI === selectedVoiceURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      }
       utterance.rate = 1;
       utterance.onstart = () => { status.textContent = t('accessibility.reading'); };
       utterance.onend = () => { status.textContent = t('accessibility.finished'); utterance = null; };

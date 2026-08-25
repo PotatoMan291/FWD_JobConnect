@@ -1,13 +1,38 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { rankCandidatesWithAi, rankVacanciesWithAi } from './ai-match.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+function loadEnvFile() {
+  const envPath = path.join(__dirname, '.env');
+  try {
+    const text = fs.readFileSync(envPath, 'utf8');
+    text.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) return;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      if (process.env[key] === undefined) process.env[key] = value;
+    });
+  } catch {
+    // Optional local secrets file
+  }
+}
+
+loadEnvFile();
 
 app.use(cors());
 app.use(express.json());
@@ -103,10 +128,14 @@ let empresas = [
 
 // Seed data para Postulaciones (/api/posts)
 let postulaciones = [
-  { id: 1, title: 'Postulación a Senior Fullstack Developer — Perfil Destacado', body: 'Candidato con 8 años de experiencia en desarrollo web moderno, arquitecturas limpias y consumo de servicios RESTful.', userId: 1, views: 142 },
-  { id: 2, title: 'Evaluación Técnica UX/UI Lead Product Designer', body: 'Portfolio auditado con excelencia visual, sistemas de diseño dinámicos y prototipado interactivo avanzado.', userId: 2, views: 98 },
-  { id: 3, title: 'Candidatura Cloud Architect AWS/GCP', body: 'Certificación profesional AWS Solutions Architect, amplia trayectoria en migración cloud e infraestructura como código.', userId: 3, views: 210 },
-  { id: 4, title: 'Requisición Reclutador IT Senior Latam', body: 'Amplia red de contactos en mercado tecnológico de América Latina y España, métricas de retención sobresalientes.', userId: 4, views: 76 }
+  { id: 1, title: 'Postulación a Senior Fullstack Developer — Perfil Destacado', body: 'Candidato con 8 años de experiencia en desarrollo web moderno, arquitecturas limpias y consumo de servicios RESTful.', userId: 6, vacancyId: 1, createdAt: '2026-08-11', views: 142 },
+  { id: 2, title: 'Evaluación Técnica UX/UI Lead Product Designer', body: 'Portfolio auditado con excelencia visual, sistemas de diseño dinámicos y prototipado interactivo avanzado.', userId: 7, vacancyId: 2, createdAt: '2026-08-13', views: 98 },
+  { id: 3, title: 'Candidatura Cloud Architect AWS/GCP', body: 'Certificación profesional AWS Solutions Architect, amplia trayectoria en migración cloud e infraestructura como código.', userId: 9, vacancyId: 3, createdAt: '2026-08-15', views: 210 },
+  { id: 4, title: 'Requisición Reclutador IT Senior Latam', body: 'Amplia red de contactos en mercado tecnológico de América Latina y España, métricas de retención sobresalientes.', userId: 3, vacancyId: 4, createdAt: '2026-08-17', views: 76 },
+  { id: 5, title: 'Postulación a Senior Data Engineer', body: 'Experiencia en pipelines, calidad de datos y modelado analítico para plataformas de inteligencia de mercado.', userId: 8, vacancyId: 5, createdAt: '2026-08-19', views: 54 },
+  { id: 6, title: 'Postulación a DevOps & SRE', body: 'Arquitecta DevOps con foco en confiabilidad, observabilidad y automatización de infraestructura.', userId: 9, vacancyId: 7, createdAt: '2026-08-21', views: 41 },
+  { id: 7, title: 'Postulación a QA Automation Lead', body: 'Candidato fullstack con interés en calidad, automatización y entrega continua.', userId: 6, vacancyId: 6, createdAt: '2026-08-20', views: 33 },
+  { id: 8, title: 'Postulación a Director de Reclutamiento IT', body: 'Consultor senior de talento con experiencia en selección ejecutiva y métricas de contratación.', userId: 2, vacancyId: 4, createdAt: '2026-08-18', views: 61 }
 ];
 
 // Seed data para Entrevistas / Feedback (/api/comments)
@@ -158,15 +187,47 @@ function paginateAndFilter(list, req, searchFields = []) {
   const skip = parseInt(req.query.skip || '0', 10);
   const limit = parseInt(req.query.limit || '10', 10);
   const q = req.query.q ? req.query.q.trim().toLowerCase() : '';
+  const {
+    category, modality, location, experienceLevel, contractType,
+    workMode, vacancyId, publishedFrom, publishedTo, createdFrom, createdTo, completed
+  } = req.query;
 
   let filtered = list;
   if (q && searchFields.length > 0) {
-    filtered = list.filter(item =>
+    filtered = filtered.filter(item =>
       searchFields.some(field => {
         const val = item[field];
         return val && String(val).toLowerCase().includes(q);
       })
     );
+  }
+
+  if (category) filtered = filtered.filter(item => String(item.category) === String(category));
+  if (modality) filtered = filtered.filter(item => String(item.modality) === String(modality));
+  if (contractType) filtered = filtered.filter(item => String(item.contractType) === String(contractType));
+  if (experienceLevel) filtered = filtered.filter(item => String(item.experienceLevel) === String(experienceLevel));
+  if (workMode) filtered = filtered.filter(item => String(item.workMode) === String(workMode));
+  if (location) {
+    const loc = String(location).toLowerCase();
+    filtered = filtered.filter(item => String(item.location || '').toLowerCase().includes(loc));
+  }
+  if (vacancyId && list.some(item => item.vacancyId !== undefined)) {
+    filtered = filtered.filter(item => String(item.vacancyId) === String(vacancyId));
+  }
+  if (publishedFrom) filtered = filtered.filter(item => !item.publishedAt || String(item.publishedAt) >= String(publishedFrom));
+  if (publishedTo) filtered = filtered.filter(item => !item.publishedAt || String(item.publishedAt) <= String(publishedTo));
+  if (createdFrom) filtered = filtered.filter(item => !item.createdAt || String(item.createdAt) >= String(createdFrom));
+  if (createdTo) filtered = filtered.filter(item => !item.createdAt || String(item.createdAt) <= String(createdTo));
+  if (completed === 'true' || completed === 'false') {
+    const done = completed === 'true';
+    filtered = filtered.filter(item => Boolean(item.completed) === done);
+  }
+
+  if (req.query.vacancyId && searchFields.includes('firstName')) {
+    const applicantIds = new Set(
+      postulaciones.filter(post => String(post.vacancyId) === String(req.query.vacancyId)).map(post => String(post.userId))
+    );
+    filtered = filtered.filter(item => applicantIds.has(String(item.id)));
   }
 
   const total = filtered.length;
@@ -298,7 +359,12 @@ app.get('/api/posts/:id', (req, res) => {
 });
 
 app.post('/api/posts/add', (req, res) => {
-  const newObj = { id: postulaciones.length + 1, views: 0, ...req.body };
+  const newObj = {
+    id: postulaciones.length + 1,
+    views: 0,
+    createdAt: new Date().toISOString().slice(0, 10),
+    ...req.body
+  };
   postulaciones.unshift(newObj);
   res.status(201).json(newObj);
 });
@@ -381,6 +447,75 @@ app.delete('/api/todos/:id', (req, res) => {
   res.json({ isDeleted: true, ...deleted });
 });
 
+function compactCandidate(candidate) {
+  return {
+    id: candidate.id,
+    firstName: candidate.firstName,
+    lastName: candidate.lastName,
+    role: candidate.role,
+    skills: candidate.skills,
+    about: candidate.about,
+    coverLetter: candidate.coverLetter,
+    workMode: candidate.workMode,
+    yearsOfExperience: candidate.yearsOfExperience,
+    location: candidate.location,
+    experience: candidate.experience
+  };
+}
+
+function compactVacancy(vacancy) {
+  return {
+    id: vacancy.id,
+    title: vacancy.title,
+    category: vacancy.category,
+    skills: vacancy.skills,
+    requirements: vacancy.requirements,
+    modality: vacancy.modality,
+    experienceLevel: vacancy.experienceLevel,
+    location: vacancy.location,
+    description: vacancy.description,
+    shortDescription: vacancy.shortDescription
+  };
+}
+
+app.post('/api/ai/rank-candidates', async (req, res) => {
+  const vacancyId = req.body?.vacancyId;
+  const vacancy = vacantes.find(item => String(item.id) === String(vacancyId));
+  if (!vacancy) return res.status(400).json({ message: 'Selecciona una vacante válida para ranking de candidatos.' });
+
+  let pool = candidatos;
+  if (Array.isArray(req.body?.candidateIds) && req.body.candidateIds.length) {
+    const allowed = new Set(req.body.candidateIds.map(String));
+    pool = candidatos.filter(item => allowed.has(String(item.id)));
+  } else {
+    const applicantIds = new Set(
+      postulaciones.filter(post => String(post.vacancyId) === String(vacancyId)).map(post => String(post.userId))
+    );
+    if (applicantIds.size) {
+      pool = candidatos.filter(item => applicantIds.has(String(item.id)));
+    }
+  }
+
+  const result = await rankCandidatesWithAi(compactVacancy(vacancy), pool.map(compactCandidate));
+  res.json({
+    vacancyId: vacancy.id,
+    vacancyTitle: vacancy.title,
+    ...result
+  });
+});
+
+app.post('/api/ai/rank-vacancies', async (req, res) => {
+  const candidateId = req.body?.candidateId;
+  const candidate = candidatos.find(item => String(item.id) === String(candidateId));
+  if (!candidate) return res.status(400).json({ message: 'No se encontró un perfil de candidato para el ranking de vacantes.' });
+
+  const result = await rankVacanciesWithAi(compactCandidate(candidate), vacantes.map(compactVacancy));
+  res.json({
+    candidateId: candidate.id,
+    ...result
+  });
+});
+
 // Ruta por defecto para la raíz
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -391,6 +526,7 @@ const server = app.listen(PORT, () => {
   console.log(`JobConnect Express Unified Server ejecutándose en:`);
   console.log(`- Aplicación Web: http://localhost:${PORT}`);
   console.log(`- Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`- OpenRouter IA: ${process.env.OPENROUTER_API_KEY ? 'configurado' : 'sin API key (usa ranking heurístico)'}`);
   console.log(`====================================================`);
 });
 

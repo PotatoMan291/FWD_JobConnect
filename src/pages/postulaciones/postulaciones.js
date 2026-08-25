@@ -10,6 +10,7 @@ import { createFilterLayout } from '../../components/filter-layout.js';
 import { renderTable } from '../../components/table.js';
 import { renderPagination } from '../../components/pagination.js';
 import { postulacionesService } from '../../services/postulaciones-service.js';
+import { vacantesService } from '../../services/vacantes-service.js';
 import { openPostulacionForm } from './postulaciones-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
@@ -42,6 +43,8 @@ const createBtn = document.getElementById('create-postulacion-btn');
 let currentCursor = 0;
 const currentLimit = 10;
 let currentSearch = '';
+let currentFilters = {};
+let vacancyTitles = new Map();
 
 async function loadData() {
   renderTable({ container: tableContainer, columns: [], isLoading: true });
@@ -49,7 +52,8 @@ async function loadData() {
   const res = await postulacionesService.getAll({
     cursor: currentCursor,
     limit: currentLimit,
-    q: currentSearch
+    q: currentSearch,
+    filters: currentFilters
   });
 
   if (!res.ok) {
@@ -61,6 +65,7 @@ async function loadData() {
   const columns = [
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#POS-') },
     { key: 'title', headerKey: 'postulaciones.form.title', render: (val) => `<strong>${truncateText(val, 45)}</strong>` },
+    { key: 'vacancyId', headerKey: 'filter.vacancy', render: (id) => vacancyTitles.get(String(id)) || (id ? formatId(id, '#VAC-') : '—') },
     { key: 'body', headerKey: 'postulaciones.form.body', render: (val) => truncateText(val, 60) },
     { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${t('postulaciones.views', { count: val || 0 })}</span>` }
   ];
@@ -111,16 +116,30 @@ function openDeleteConfirmation(id, item) {
   });
 }
 
-createFilterLayout({
+const postulacionFilter = createFilterLayout({
   container: filterContainer,
   fields: [
-    { key: 'search', type: 'text', placeholder: 'filter.search' }
+    { key: 'search', type: 'text', placeholder: 'filter.search' },
+    { key: 'vacancyId', type: 'select', labelKey: 'filter.vacancy', options: [] },
+    { key: 'created', type: 'date-range', fromKey: 'createdFrom', toKey: 'createdTo', labelKey: 'filter.applied' }
   ],
   onFilterChange: (filters) => {
     currentSearch = filters.search || '';
+    currentFilters = {
+      vacancyId: filters.vacancyId || '',
+      createdFrom: filters.createdFrom || '',
+      createdTo: filters.createdTo || ''
+    };
     currentCursor = 0;
     loadData();
   }
+});
+
+vacantesService.getAll({ cursor: 0, limit: 100 }).then(res => {
+  if (!res.ok) return;
+  vacancyTitles = new Map((res.data || []).map(job => [String(job.id), job.title]));
+  postulacionFilter.setOptions('vacancyId', (res.data || []).map(job => ({ value: String(job.id), label: job.title })));
+  loadData();
 });
 
 createBtn.addEventListener('click', () => {

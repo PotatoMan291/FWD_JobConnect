@@ -119,5 +119,11 @@
   "accessibility.finished": "Reading finished.",
   "accessibility.ttsUnsupported": "Your browser does not support text to speech.",
   "accessibility.ttsError": "The text could not be read aloud.",
-  "accessibility.noText": "No readable text was found."
+  "accessibility.noText": "No readable text was found.",
+  "accessibility.voice": "Voice",
+  "accessibility.voiceHelp": "Available voices depend on your browser and operating system. You can choose a female or male voice when your device provides them.",
+  "accessibility.voiceLoading": "Loading voices…",
+  "accessibility.voiceDefault": "System default voice",
+  "accessibility.voiceChanged": "Voice selected. Start reading to hear it.",
+  "accessibility.voiceDefaultSelected": "The system default voice will be used."
 }

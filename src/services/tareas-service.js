@@ -1,6 +1,7 @@
 import { httpClient } from './http-client.js';
 import { buildQueryParams } from '../utils/query-params.js';
 import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem } from '../utils/demo-store.js';
+import { applyRecordFilters } from '../utils/apply-filters.js';
 
 const RESOURCE = '/todos';
 
@@ -12,9 +13,9 @@ export const tareasService = {
     if (res.ok && res.data) {
       const rawTodos = res.data.todos || [];
       const mergedTodos = mergeDemoList('tareas', rawTodos);
-
-      const total = mergedTodos.length;
-      const paginated = mergedTodos.slice(cursor, cursor + limit);
+      const filtered = applyRecordFilters(mergedTodos, filters);
+      const total = filtered.length;
+      const paginated = filtered.slice(cursor, cursor + limit);
 
       return {
         ok: true,

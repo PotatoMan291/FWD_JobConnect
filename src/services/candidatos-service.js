@@ -1,6 +1,8 @@
 import { httpClient } from './http-client.js';
 import { buildQueryParams } from '../utils/query-params.js';
 import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem, getDemoStore } from '../utils/demo-store.js';
+import { applyRecordFilters } from '../utils/apply-filters.js';
+import { seedDemoData } from '../utils/demo-data.js';
 
 const RESOURCE = '/users';
 
@@ -51,6 +53,9 @@ export function normalizeCandidate(raw = {}) {
     phone: valueOrFallback(raw.phone),
     company: companyName(raw.company),
     location: valueOrFallback(rawLocation),
+    country: valueOrFallback(raw.country, ''),
+    province: valueOrFallback(raw.province, ''),
+    canton: valueOrFallback(raw.canton, ''),
     about: valueOrFallback(raw.about, 'Información profesional no disponible.'),
     coverLetter: valueOrFallback(raw.coverLetter, 'Carta de presentación no disponible.'),
     experience: asArray(raw.experience),
@@ -76,13 +81,15 @@ function getLocalCandidate(id) {
 
 export const candidatosService = {
   async getAll({ cursor = 0, limit = 10, q = '', filters = {} } = {}) {
-    const query = buildQueryParams({ limit, skip: cursor, q, filters });
+    seedDemoData();
+    const { vacancyId, ...restFilters } = filters;
+    const query = buildQueryParams({ limit: 1000, skip: 0, q, filters: { ...restFilters, vacancyId } });
     const endpoint = q ? `${RESOURCE}/search${query}` : `${RESOURCE}${query}`;
     const res = await httpClient(endpoint);
 
     if (res.ok && res.data) {
       const rawUsers = res.data.users || [];
-      const mergedUsers = mergeDemoList('candidatos', rawUsers);
+      const mergedUsers = mergeDemoList('candidatos', rawUsers).map(normalizeCandidate);
 
       let finalData = mergedUsers;
       if (q) {
@@ -90,11 +97,24 @@ export const candidatosService = {
         finalData = mergedUsers.filter(u =>
           (u.firstName && u.firstName.toLowerCase().includes(queryLower)) ||
           (u.lastName && u.lastName.toLowerCase().includes(queryLower)) ||
-          (u.email && u.email.toLowerCase().includes(queryLower))
+          (u.email && u.email.toLowerCase().includes(queryLower)) ||
+          (u.professionalTitle && u.professionalTitle.toLowerCase().includes(queryLower))
         );
       }
 
-      const total = q ? finalData.length : (res.data.total ?? finalData.length);
+      finalData = applyRecordFilters(finalData, restFilters);
+
+      if (vacancyId) {
+        const postsQuery = buildQueryParams({ limit: 1000, skip: 0, filters: { vacancyId } });
+        const postsRes = await httpClient(`/posts${postsQuery}`);
+        const posts = mergeDemoList('postulaciones', postsRes.ok ? (postsRes.data?.posts || []) : []);
+        const applicantIds = new Set(
+          posts.filter(post => String(post.vacancyId) === String(vacancyId)).map(post => String(post.userId))
+        );
+        finalData = finalData.filter(candidate => applicantIds.has(String(candidate.id)));
+      }
+
+      const total = finalData.length;
       const paginated = finalData.slice(cursor, cursor + limit);
 
       return {
@@ -111,10 +131,11 @@ export const candidatosService = {
 
   async getById(id) {
     const localCandidate = getLocalCandidate(id);
-    const isLocalOnly = localCandidate?._isLocal;
-
-    if (isLocalOnly) {
+    if (localCandidate?._isLocal) {
       return { ok: true, data: normalizeCandidate(localCandidate) };
+    }
+    if (String(id).startsWith('local-') && !localCandidate) {
+      return { ok: true, data: null };
     }
 
     const res = await httpClient(`${RESOURCE}/${id}`);
@@ -135,10 +156,12 @@ export const candidatosService = {
   },
 
   async update(id, payload) {
-    await httpClient(`${RESOURCE}/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(payload)
-    });
+    if (!String(id).startsWith('local-')) {
+      await httpClient(`${RESOURCE}/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+    }
     updateDemoItem('candidatos', id, payload);
     return { ok: true, data: { id, ...payload } };
   },

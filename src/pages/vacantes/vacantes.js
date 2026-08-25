@@ -9,6 +9,8 @@ import { renderLanguageSwitcher } from '../../components/language-switcher.js';
 import { createFilterLayout } from '../../components/filter-layout.js';
 import { renderPagination } from '../../components/pagination.js';
 import { vacantesService } from '../../services/vacantes-service.js';
+import { aiMatchService } from '../../services/ai-match-service.js';
+import { authService } from '../../services/auth-service.js';
 import { openVacanteForm } from './vacantes-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
@@ -42,13 +44,16 @@ let currentCursor = 0;
 const currentLimit = 10;
 let currentSearch = '';
 let currentFilters = {};
+let aiRankings = new Map();
+let aiEnabled = false;
+const currentUser = authService.getCurrentUser();
 
 async function loadData() {
   renderJobCatalog({ container: catalogContainer, isLoading: true });
 
   const res = await vacantesService.getAll({
-    cursor: currentCursor,
-    limit: currentLimit,
+    cursor: aiEnabled ? 0 : currentCursor,
+    limit: aiEnabled ? 100 : currentLimit,
     q: currentSearch,
     filters: currentFilters
   });
@@ -59,9 +64,20 @@ async function loadData() {
     return;
   }
 
+  let jobs = res.data;
+  let total = res.total;
+  if (aiEnabled && aiRankings.size) {
+    jobs = jobs.map(job => {
+      const ranking = aiRankings.get(String(job.id));
+      return ranking ? { ...job, matchScore: ranking.score, matchReason: ranking.reason } : job;
+    }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+    total = jobs.length;
+    jobs = jobs.slice(currentCursor, currentCursor + currentLimit);
+  }
+
   renderJobCatalog({
     container: catalogContainer,
-    jobs: res.data,
+    jobs,
     onEdit: item => openVacanteForm({ item, onSave: loadData }),
     onDelete: item => openDeleteConfirmation(item.id, item),
     emptyMessage: t('vacantes.empty.search')
@@ -69,9 +85,9 @@ async function loadData() {
 
   renderPagination({
     container: paginationContainer,
-    skip: res.skip,
+    skip: currentCursor,
     limit: currentLimit,
-    total: res.total,
+    total,
     onCursorChange: (newCursor) => {
       currentCursor = newCursor;
       loadData();
@@ -101,14 +117,81 @@ function openDeleteConfirmation(id, item) {
   });
 }
 
+const vacanteFields = [
+  { key: 'search', type: 'text', placeholder: 'filter.search' },
+  { key: 'category', type: 'select', labelKey: 'filter.category', options: [
+    { value: 'Ingeniería de Software', label: 'Ingeniería de Software' },
+    { value: 'Diseño & Producto', label: 'Diseño & Producto' },
+    { value: 'Infraestructura Cloud', label: 'Infraestructura Cloud' },
+    { value: 'Recursos Humanos', label: 'Recursos Humanos' },
+    { value: 'Ciencia de Datos', label: 'Ciencia de Datos' },
+    { value: 'Control de Calidad', label: 'Control de Calidad' },
+    { value: 'Operaciones IT', label: 'Operaciones IT' },
+    { value: 'Desarrollo Móvil', label: 'Desarrollo Móvil' }
+  ]},
+  { key: 'modality', type: 'select', labelKey: 'filter.modality', options: [
+    { value: 'Remoto', label: 'Remoto' },
+    { value: 'Híbrido', label: 'Híbrido' },
+    { value: 'Presencial', label: 'Presencial' }
+  ]},
+  { key: 'experienceLevel', type: 'select', labelKey: 'filter.experience', options: [
+    { value: 'Intermedio', label: 'Intermedio' },
+    { value: 'Senior', label: 'Senior' }
+  ]},
+  { key: 'location', type: 'select', labelKey: 'filter.location', options: [
+    { value: 'San José', label: 'San José' },
+    { value: 'Heredia', label: 'Heredia' },
+    { value: 'Alajuela', label: 'Alajuela' },
+    { value: 'Cartago', label: 'Cartago' },
+    { value: 'Escazú', label: 'Escazú' },
+    { value: 'Santa Ana', label: 'Santa Ana' },
+    { value: 'Belén', label: 'Belén' }
+  ]},
+  { key: 'published', type: 'date-range', fromKey: 'publishedFrom', toKey: 'publishedTo', labelKey: 'filter.published' }
+];
+
+if (currentUser?.id) {
+  vacanteFields.push({
+    key: 'ai',
+    type: 'action',
+    labelKey: 'filter.ai.vacancies',
+    icon: 'sparkles'
+  });
+}
+
 createFilterLayout({
   container: filterContainer,
-  fields: [
-    { key: 'search', type: 'text', placeholder: 'filter.search' }
-  ],
+  fields: vacanteFields,
   onFilterChange: (filters) => {
     currentSearch = filters.search || '';
+    currentFilters = {
+      category: filters.category || '',
+      modality: filters.modality || '',
+      experienceLevel: filters.experienceLevel || '',
+      location: filters.location || '',
+      publishedFrom: filters.publishedFrom || '',
+      publishedTo: filters.publishedTo || ''
+    };
     currentCursor = 0;
+    loadData();
+  },
+  onAction: async (actionKey) => {
+    if (actionKey !== 'ai') return;
+    const candidateId = currentUser?.id;
+    if (!candidateId) {
+      showToast(t('filter.ai.needProfile'), 'error');
+      return;
+    }
+    showToast(t('filter.ai.running'), 'info');
+    const res = await aiMatchService.rankVacancies({ candidateId });
+    if (!res.ok) {
+      showToast(res.message || t('toast.error'), 'error');
+      return;
+    }
+    aiRankings = new Map((res.data.rankings || []).map(item => [String(item.id), item]));
+    aiEnabled = true;
+    currentCursor = 0;
+    showToast(res.data.source === 'openrouter' ? t('filter.ai.success') : t('filter.ai.fallback'), 'success');
     loadData();
   }
 });
