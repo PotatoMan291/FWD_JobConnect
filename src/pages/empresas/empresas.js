@@ -56,8 +56,8 @@ async function loadData() {
 
   const columns = [
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#EMP-') },
-    { key: 'userId', headerKey: 'table.name', isMono: true, render: (uid) => `<strong>Cuenta Corporativa #${uid}</strong>` },
-    { key: 'totalProducts', headerKey: 'empresas.form.quantity', isMono: true, render: (val) => `<span class="badge badge-active">${val || 0} Vacantes</span>` },
+    { key: 'userId', headerKey: 'table.name', isMono: true, render: (uid) => `<strong>${t('empresas.account', { id: uid })}</strong>` },
+    { key: 'totalProducts', headerKey: 'empresas.form.quantity', isMono: true, render: (val) => `<span class="badge badge-active">${t('empresas.vacancies_count', { count: val || 0 })}</span>` },
     { key: 'total', headerKey: 'empresas.form.total', isMono: true, render: (val) => formatCurrency(val) }
   ];
 

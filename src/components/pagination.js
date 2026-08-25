@@ -56,5 +56,8 @@ export function renderPagination({
 
   renderContent();
 
-  window.addEventListener('languagechange', renderContent);
+  if (!container.dataset.languageChangeBound) {
+    window.addEventListener('languagechange', renderContent);
+    container.dataset.languageChangeBound = 'true';
+  }
 }

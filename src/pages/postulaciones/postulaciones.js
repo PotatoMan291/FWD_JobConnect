@@ -67,7 +67,7 @@ async function loadData() {
     { key: 'title', headerKey: 'postulaciones.form.title', render: (val) => `<strong>${truncateText(val, 45)}</strong>` },
     { key: 'vacancyId', headerKey: 'filter.vacancy', render: (id) => vacancyTitles.get(String(id)) || (id ? formatId(id, '#VAC-') : '—') },
     { key: 'body', headerKey: 'postulaciones.form.body', render: (val) => truncateText(val, 60) },
-    { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${val || 0} Vistas</span>` }
+    { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${t('postulaciones.views', { count: val || 0 })}</span>` }
   ];
 
   renderTable({

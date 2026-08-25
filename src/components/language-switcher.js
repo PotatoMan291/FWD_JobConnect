@@ -1,4 +1,4 @@
-import { getLanguage, setLanguage } from '../utils/i18n.js';
+import { getLanguage, setLanguage, t } from '../utils/i18n.js';
 
 let clickListenerAttached = false;
 
@@ -13,17 +13,19 @@ export function renderLanguageSwitcher(container) {
     { code: 'zh', name: '中文', flag: '🇨🇳' }
   ];
 
+  const displayCode = currentLang === 'en' ? 'US' : currentLang === 'zh' ? 'CN' : currentLang.toUpperCase();
+
   const html = `
     <div class="lang-dropdown-wrapper" style="position: relative; display: inline-block;">
-      <button class="btn btn-secondary btn-icon" id="lang-toggle-btn" aria-haspopup="true" aria-expanded="false" aria-label="Seleccionar idioma" style="font-weight: 600;">
-        🌐 ${currentLang.toUpperCase()} ▾
+      <button class="btn btn-secondary btn-icon" id="lang-toggle-btn" aria-haspopup="true" aria-expanded="false" aria-label="${t('language.select')}" style="font-weight: 600;">
+        🌐 ${displayCode} ▾
       </button>
-      <div class="lang-dropdown-menu" id="lang-dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: var(--bg-card, #fff); border: 1px solid var(--border-color, #e5e7eb); border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; margin-top: 5px; padding: 5px 0;">
-        <div style="padding: 8px 15px; font-weight: bold; border-bottom: 1px solid var(--border-color, #e5e7eb); margin-bottom: 5px; color: var(--text-color, #111827); font-size: 14px;">
-          🌐 Seleccionar idioma
+      <div class="lang-dropdown-menu" id="lang-dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-md); z-index: 1000; min-width: 180px; margin-top: 5px; padding: 5px 0;">
+        <div style="padding: 8px 15px; font-weight: bold; border-bottom: 1px solid var(--color-border); margin-bottom: 5px; color: var(--color-ink); font-size: 14px;">
+          🌐 ${t('language.select')}
         </div>
         ${langs.map(l => `
-          <button class="lang-option" data-lang="${l.code}" aria-selected="${currentLang === l.code}" style="display: flex; align-items: center; width: 100%; padding: 8px 15px; background: transparent; border: none; text-align: left; cursor: pointer; color: var(--text-color, #111827); font-size: 14px;">
+          <button class="lang-option" data-lang="${l.code}" aria-selected="${currentLang === l.code}" style="display: flex; align-items: center; width: 100%; padding: 8px 15px; background: transparent; border: none; text-align: left; cursor: pointer; color: var(--color-ink); font-size: 14px;">
             <span style="width: 20px; display: inline-block; font-weight: bold;">${currentLang === l.code ? '✓' : ''}</span>
             <span style="margin-right: 8px;">${l.flag}</span>
             ${l.name}
@@ -52,7 +54,7 @@ export function renderLanguageSwitcher(container) {
       setLanguage(selectedLang);
       renderLanguageSwitcher(container);
     });
-    opt.addEventListener('mouseover', () => { opt.style.backgroundColor = 'var(--bg-hover, rgba(0,0,0,0.05))'; });
+    opt.addEventListener('mouseover', () => { opt.style.backgroundColor = 'var(--color-bg)'; });
     opt.addEventListener('mouseout', () => { opt.style.backgroundColor = 'transparent'; });
   });
 

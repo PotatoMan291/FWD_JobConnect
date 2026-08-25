@@ -1,5 +1,6 @@
 import { icons } from '../assets/icons/icons.js';
 import { bloquearScroll, desbloquearScroll } from '../utils/scroll-lock.js';
+import { t } from '../utils/i18n.js';
 
 let activeOverlay = null;
 
@@ -14,7 +15,7 @@ export function openModal({ title, bodyHTML, footerHTML, onClose = null }) {
     <div class="modal-container" role="dialog" aria-modal="true">
       <div class="modal-header">
         <h3>${title}</h3>
-        <button class="modal-close-btn" aria-label="Cerrar modal">
+        <button class="modal-close-btn" aria-label="${t('modal.close')}" title="${t('modal.close')}">
           ${icons.close}
         </button>
       </div>
