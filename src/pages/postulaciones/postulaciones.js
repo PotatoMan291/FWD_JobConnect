@@ -15,6 +15,7 @@ import { openPostulacionForm } from './postulaciones-form.js';
 import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
 import { formatId, truncateText } from '../../utils/format.js';
+import { openJobDetails } from '../../components/job-catalog.js';
 
 initTheme();
 initAccessibility();
@@ -46,6 +47,12 @@ let currentSearch = '';
 let currentFilters = {};
 let vacancyTitles = new Map();
 
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[character]));
+}
+
 async function loadData() {
   renderTable({ container: tableContainer, columns: [], isLoading: true });
 
@@ -64,10 +71,11 @@ async function loadData() {
 
   const columns = [
     { key: 'id', headerKey: 'table.id', isMono: true, render: (id) => formatId(id, '#POS-') },
-    { key: 'title', headerKey: 'postulaciones.form.title', render: (val) => `<strong>${truncateText(val, 45)}</strong>` },
+    { key: 'title', headerKey: 'postulaciones.form.title', render: (val) => `<strong>${escapeHTML(val || 'Postulación sin título')}</strong>` },
     { key: 'vacancyId', headerKey: 'filter.vacancy', render: (id) => vacancyTitles.get(String(id)) || (id ? formatId(id, '#VAC-') : '—') },
-    { key: 'body', headerKey: 'postulaciones.form.body', render: (val) => truncateText(val, 60) },
-    { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${t('postulaciones.views', { count: val || 0 })}</span>` }
+    { key: 'body', headerKey: 'postulaciones.form.body', render: (val) => `<span title="${escapeHTML(val || '')}">${escapeHTML(truncateText(val || 'Resumen no disponible', 120))}</span>` },
+    { key: 'vacancyId', header: 'Empleo', render: (id) => id ? `<button type="button" class="btn btn-secondary view-job-btn" data-job-id="${escapeHTML(id)}">Ver empleo</button>` : '—' },
+  { key: 'views', headerKey: 'table.status', render: (val) => `<span class="badge badge-neutral">${t('postulaciones.views', { count: val || 0 })}</span>` }
   ];
 
   renderTable({
@@ -80,6 +88,10 @@ async function loadData() {
     onDelete: (id, item) => {
       openDeleteConfirmation(id, item);
     }
+  });
+
+  tableContainer.querySelectorAll('.view-job-btn').forEach(button => {
+    button.addEventListener('click', () => openJobDetails(button.dataset.jobId));
   });
 
   renderPagination({

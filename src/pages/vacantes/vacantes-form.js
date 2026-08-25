@@ -2,6 +2,7 @@ import { openModal, closeModal } from '../../components/modal.js';
 import { vacantesService } from '../../services/vacantes-service.js';
 import { showToast } from '../../components/toast.js';
 import { t } from '../../utils/i18n.js';
+import { authService } from '../../services/auth-service.js';
 
 export function openVacanteForm({ item = null, onSave }) {
   const isEdit = !!item;
@@ -50,7 +51,8 @@ export function openVacanteForm({ item = null, onSave }) {
       title: overlay.querySelector('#title').value.trim(),
       category: overlay.querySelector('#category').value.trim(),
       price: parseFloat(overlay.querySelector('#price').value),
-      stock: parseInt(overlay.querySelector('#stock').value, 10)
+      stock: parseInt(overlay.querySelector('#stock').value, 10),
+      ...(isEdit ? {} : { createdBy: authService.getCurrentUser()?.id || null })
     };
 
     let res;

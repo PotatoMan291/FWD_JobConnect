@@ -105,7 +105,7 @@ export const vacantesService = {
       body: JSON.stringify(payload)
     });
     if (!res.ok) return res;
-    const createdObj = res.data || payload;
+    const createdObj = { ...payload, ...(res.data || {}) };
     const item = addDemoItem('vacantes', createdObj);
     return { ok: true, data: item };
   },

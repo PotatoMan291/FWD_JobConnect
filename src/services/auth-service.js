@@ -1,8 +1,9 @@
 import { httpClient } from './http-client.js';
 import { storage } from '../utils/storage.js';
+import { addDemoItem } from '../utils/demo-store.js';
 
 export const authService = {
-  register({ firstName, lastName, email, username, password }) {
+  register({ firstName, lastName, email, username, password, role = 'user' }) {
     const users = storage.get('registered_users', []);
     const normalizedUsername = username.trim().toLowerCase();
     if (users.some(user => user.username === normalizedUsername)) {
@@ -16,10 +17,17 @@ export const authService = {
       email: email.trim().toLowerCase(),
       firstName: firstName.trim(),
       lastName: lastName.trim(),
-      role: 'user'
+      role: role === 'recruiter' ? 'recruiter' : 'user'
     };
     users.push(user);
     storage.set('registered_users', users);
+    addDemoItem('candidatos', {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      recruitmentStatus: 'Nuevo'
+    });
 
     const sessionUser = { ...user };
     delete sessionUser.password;

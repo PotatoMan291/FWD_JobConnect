@@ -31,6 +31,9 @@ export default {
   "login.registerUsername": "Usuario",
   "login.registerPassword": "Contraseña",
   "login.registerSubmit": "Registrarse",
+  "login.registerRole": "¿Qué estás buscando?",
+  "login.roleCandidate": "Busco trabajo",
+  "login.roleRecruiter": "Contratador",
 
   "dashboard.title": "Panel de Control Operativo",
   "dashboard.subtitle": "Resumen ejecutivo de actividad, vacantes activas y métricas de contratación",
