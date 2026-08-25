@@ -14,7 +14,7 @@ export function openEntrevistaForm({ item = null, onSave }) {
         <textarea id="body" class="textarea" rows="4" required>${item ? item.body || '' : ''}</textarea>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+      <div class="form-grid-2">
         <div class="form-group">
           <label for="postId" data-i18n="entrevistas.form.postid">${t('entrevistas.form.postid')}</label>
           <input type="number" id="postId" class="input" value="${item ? item.postId || '1' : '1'}" required />
