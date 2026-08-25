@@ -119,5 +119,11 @@
   "accessibility.finished": "Lectura finalizada.",
   "accessibility.ttsUnsupported": "Tu navegador no admite texto a voz.",
   "accessibility.ttsError": "No fue posible reproducir la lectura.",
-  "accessibility.noText": "No se encontró texto para leer."
+  "accessibility.noText": "No se encontró texto para leer.",
+  "accessibility.voice": "Voz",
+  "accessibility.voiceHelp": "Las voces disponibles dependen del navegador y del sistema operativo. Puedes elegir una voz femenina o masculina si tu dispositivo las ofrece.",
+  "accessibility.voiceLoading": "Cargando voces…",
+  "accessibility.voiceDefault": "Voz predeterminada del sistema",
+  "accessibility.voiceChanged": "Voz seleccionada. Inicia la lectura para escucharla.",
+  "accessibility.voiceDefaultSelected": "Se usará la voz predeterminada del sistema."
 }
