@@ -2091,6 +2091,7 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
   }
 }
 
+@media (max-width: 768px) {
   .modal-footer {
     align-items: stretch;
     flex-direction: column-reverse;
