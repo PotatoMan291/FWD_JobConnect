@@ -2284,7 +2284,8 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
 }
 
 .camera-video-elem {
-  transform: scaleX(-1); /* Efecto espejo natural para selfies */
+  transform: scaleX(-1);
+  /* Efecto espejo natural para selfies */
 }
 
 .camera-viewfinder-guide {
@@ -2330,9 +2331,20 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
 }
 
 @keyframes pulse-live {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.8; }
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
 }
 
 .camera-error-message {

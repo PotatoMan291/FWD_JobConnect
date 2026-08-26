@@ -99,7 +99,7 @@ export function renderJobCard(rawJob, { showManageActions = false, selected = fa
         <p class="job-card-date">${t('job.published_at')}: ${escapeHTML(formatDate(job.publishedAt))}</p>
         <div class="job-card-actions">
           <button class="btn btn-secondary" type="button" data-details-job="${escapeHTML(job.id)}">${t('job.details')}</button>
-          ${isOwner ? '<button class="btn btn-secondary" type="button" disabled>No puedes aplicar</button>' : `<button class="btn btn-primary" type="button" data-apply-job="${escapeHTML(job.id)}">Aplicar ahora</button>`}
+          ${isOwner ? `<button class="btn btn-secondary" type="button" disabled>${t('job.apply.disabled')}</button>` : `<button class="btn btn-primary" type="button" data-apply-job="${escapeHTML(job.id)}">${t('job.apply')}</button>`}
         </div>
         ${showManageActions ? `<div class="job-card-manage-actions"><button class="job-card-text-action" type="button" data-edit-job="${escapeHTML(job.id)}">${t('job.edit')}</button><button class="job-card-text-action job-card-delete-action" type="button" data-delete-job="${escapeHTML(job.id)}">${t('job.delete')}</button></div>` : ''}
       </div>
@@ -209,24 +209,24 @@ export async function openJobDetails(jobId) {
   const renderDetails = job => {
     const isOwner = currentUser?.role === 'recruiter' && String(job.createdBy) === String(currentUser.id);
     body.innerHTML = `
-      <div class="job-details-tabs" role="tablist" aria-label="Información de la vacante">
-        <button type="button" class="job-details-tab is-active" role="tab" aria-selected="true" data-job-tab="summary">Vacante</button>
-        <button type="button" class="job-details-tab" role="tab" aria-selected="false" data-job-tab="details">Detalle</button>
+      <div class="job-details-tabs" role="tablist" aria-label="${t('job.details.aria')}">
+        <button type="button" class="job-details-tab is-active" role="tab" aria-selected="true" data-job-tab="summary">${t('job.tab.summary')}</button>
+        <button type="button" class="job-details-tab" role="tab" aria-selected="false" data-job-tab="details">${t('job.tab.details')}</button>
       </div>
       <section class="job-details-panel is-active" data-job-panel="summary" role="tabpanel">
         <div class="job-details-header"><div class="job-card-logo">${companyLogoMarkup(job)}</div><div><p class="job-card-company">${escapeHTML(job.companyName)}</p><h3>${escapeHTML(job.title)}</h3><p class="job-card-salary">${escapeHTML(formatSalary(job))}</p></div></div>
-        <div class="job-details-meta"><span>${escapeHTML(job.location)}</span><span>${escapeHTML(job.modality)}</span><span>${escapeHTML(job.contractType)}</span><span>Cierre: ${escapeHTML(formatDate(job.closingDate))}</span></div>
-        <section><h4>Resumen</h4><p>${escapeHTML(job.shortDescription)}</p></section>
-        <section><h4>Categoría</h4><p>${escapeHTML(job.category)} · ${escapeHTML(job.experienceLevel)}</p></section>
+        <div class="job-details-meta"><span>${escapeHTML(job.location)}</span><span>${escapeHTML(job.modality)}</span><span>${escapeHTML(job.contractType)}</span><span>${t('job.closing_date')}: ${escapeHTML(formatDate(job.closingDate))}</span></div>
+        <section><h4>${t('job.summary.title')}</h4><p>${escapeHTML(job.shortDescription)}</p></section>
+        <section><h4>${t('job.category.title')}</h4><p>${escapeHTML(job.category)} · ${escapeHTML(job.experienceLevel)}</p></section>
       </section>
       <section class="job-details-panel" data-job-panel="details" role="tabpanel" hidden>
-        <section><h4>Descripción</h4><p>${escapeHTML(job.description)}</p></section>
-        <section><h4>Responsabilidades</h4>${listMarkup(job.responsibilities, 'Responsabilidades no disponibles.')}</section>
-        <section><h4>Requisitos</h4>${listMarkup(job.requirements, 'Requisitos no disponibles.')}</section>
-        <section><h4>Beneficios</h4>${listMarkup(job.benefits, 'Beneficios no disponibles.')}</section>
-        <section><h4>Información de la empresa</h4><p>${escapeHTML(job.companyDescription || 'Información de la empresa no disponible.')}</p></section>
+        <section><h4>${t('job.description.title')}</h4><p>${escapeHTML(job.description)}</p></section>
+        <section><h4>${t('job.responsibilities.title')}</h4>${listMarkup(job.responsibilities, t('job.responsibilities.tbd'))}</section>
+        <section><h4>${t('job.requirements.title')}</h4>${listMarkup(job.requirements, t('job.requirements.tbd'))}</section>
+        <section><h4>${t('job.benefits.title')}</h4>${listMarkup(job.benefits, t('job.benefits.tbd'))}</section>
+        <section><h4>${t('job.company.title')}</h4><p>${escapeHTML(job.companyDescription || t('job.company.tbd'))}</p></section>
       </section>
-      <div class="job-details-footer"><button class="btn btn-secondary job-details-close">Cerrar</button>${isOwner ? '<button class="btn btn-secondary" disabled>No puedes aplicar a tu propia vacante</button>' : '<button class="btn btn-primary job-details-apply">Aplicar ahora</button>'}</div>`;
+      <div class="job-details-footer"><button class="btn btn-secondary job-details-close">${t('modal.close')}</button>${isOwner ? `<button class="btn btn-secondary" disabled>${t('job.apply.own_disabled')}</button>` : `<button class="btn btn-primary job-details-apply">${t('job.apply')}</button>`}</div>`;
     body.querySelector('.job-details-close').addEventListener('click', closeModal);
     body.querySelector('.job-details-apply')?.addEventListener('click', () => applyToJob(job.id));
     body.querySelectorAll('[data-job-tab]').forEach(tab => {
@@ -269,7 +269,7 @@ export async function applyToJob(jobId) {
   const user = authService.getCurrentUser() || { firstName: t('job.applicant.default') };
 
   if (job?.createdBy && user.role === 'recruiter' && String(job.createdBy) === String(user.id)) {
-    showToast('No puedes aplicar a una vacante que tú publicaste.', 'error');
+    showToast(t('job.apply.own_error'), 'error');
     return;
   }
 

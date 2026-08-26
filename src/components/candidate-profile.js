@@ -148,7 +148,7 @@ function openInterviewScheduler(candidate) {
       const platformSelect = modal.querySelector('#interview-platform');
 
       if (!dateInput.value || !timeInput.value) {
-        showToast('Selecciona la fecha y la hora para la entrevista.', 'error');
+        showToast(t('candidate.interview.select_time', { defaultValue: 'Selecciona la fecha y la hora para la entrevista.' }), 'error');
         return;
       }
 
@@ -171,32 +171,32 @@ function openInterviewScheduler(candidate) {
       localStorage.setItem('jobconnect_interviews', JSON.stringify(stored));
 
       closeModal();
-      showToast(`Entrevista agendada para ${formattedDate} en ${platformSelect.value}.`, 'success');
+      showToast(t('candidate.interview.scheduled', { date: formattedDate, platform: platformSelect.value, defaultValue: `Entrevista agendada para ${formattedDate} en ${platformSelect.value}.` }), 'success');
     });
   }
 }
 
 function profileMarkup(candidate) {
-  const hasEmail = candidate.email !== 'No disponible';
-  const hasPhone = candidate.phone !== 'No disponible';
+  const hasEmail = candidate.email !== t('profile.js.defaultTitle', { defaultValue: 'No disponible' });
+  const hasPhone = candidate.phone !== t('profile.js.defaultTitle', { defaultValue: 'No disponible' });
   const hasLinkedIn = isSafeUrl(candidate.linkedinUrl, ['linkedin.com']);
   const hasPortfolio = isSafeUrl(candidate.portfolioUrl);
   const hasCv = isSafeUrl(candidate.cvUrl);
 
   const experience = listMarkup(candidate.experience, item => `
     <article class="candidate-profile-timeline-item">
-      <h4>${escapeHTML(item.title || item.position || 'Experiencia profesional')}</h4>
-      <p class="candidate-profile-muted">${escapeHTML(item.company || 'No disponible')} · ${escapeHTML(item.startDate || item.start || 'No disponible')} — ${escapeHTML(item.endDate || item.end || 'Actualidad')}</p>
+      <h4>${escapeHTML(item.title || item.position || t('candidate.experience.title', { defaultValue: 'Experiencia profesional' }))}</h4>
+      <p class="candidate-profile-muted">${escapeHTML(item.company || t('profile.js.defaultTitle', { defaultValue: 'No disponible' }))} · ${escapeHTML(item.startDate || item.start || t('profile.js.defaultTitle', { defaultValue: 'No disponible' }))} — ${escapeHTML(item.endDate || item.end || t('candidate.experience.present', { defaultValue: 'Actualidad' }))}</p>
       ${item.description ? `<p>${escapeHTML(item.description)}</p>` : ''}
-      ${item.achievements ? `<p><strong>Logros:</strong> ${escapeHTML(Array.isArray(item.achievements) ? item.achievements.join(', ') : item.achievements)}</p>` : ''}
-    </article>`, 'No hay experiencia profesional registrada.');
+      ${item.achievements ? `<p><strong>${t('candidate.experience.achievements', { defaultValue: 'Logros:' })}</strong> ${escapeHTML(Array.isArray(item.achievements) ? item.achievements.join(', ') : item.achievements)}</p>` : ''}
+    </article>`, t('candidate.experience.empty', { defaultValue: 'No hay experiencia profesional registrada.' }));
 
   const education = listMarkup(candidate.education, item => `
     <article class="candidate-profile-timeline-item">
-      <h4>${escapeHTML(item.institution || 'Institución no disponible')}</h4>
-      <p>${escapeHTML(item.degree || item.title || 'Título no disponible')}${item.specialty ? ` · ${escapeHTML(item.specialty)}` : ''}</p>
-      <p class="candidate-profile-muted">${escapeHTML(item.period || `${item.startDate || item.start || 'No disponible'} — ${item.endDate || item.end || 'No disponible'}`)}</p>
-    </article>`, 'No hay formación académica registrada.');
+      <h4>${escapeHTML(item.institution || t('candidate.education.no_institution', { defaultValue: 'Institución no disponible' }))}</h4>
+      <p>${escapeHTML(item.degree || item.title || t('candidate.education.no_title', { defaultValue: 'Título no disponible' }))}${item.specialty ? ` · ${escapeHTML(item.specialty)}` : ''}</p>
+      <p class="candidate-profile-muted">${escapeHTML(item.period || `${item.startDate || item.start || t('profile.js.defaultTitle', { defaultValue: 'No disponible' })} — ${item.endDate || item.end || t('profile.js.defaultTitle', { defaultValue: 'No disponible' })}`)}</p>
+    </article>`, t('candidate.education.empty', { defaultValue: 'No hay formación académica registrada.' }));
 
   return `
     <div class="candidate-profile-content">
@@ -212,42 +212,42 @@ function profileMarkup(candidate) {
       </section>
 
       <section class="candidate-profile-section">
-        <h3>Presentación profesional</h3>
-        <h4>Acerca de mí</h4>
+        <h3>${t('candidate.presentation.title', { defaultValue: 'Presentación profesional' })}</h3>
+        <h4>${t('profile.form.about', { defaultValue: 'Acerca de mí' })}</h4>
         <p>${escapeHTML(candidate.about)}</p>
-        <h4>Carta de presentación</h4>
+        <h4>${t('candidate.presentation.cover_letter', { defaultValue: 'Carta de presentación' })}</h4>
         <p>${escapeHTML(candidate.coverLetter)}</p>
         <dl class="candidate-profile-info-grid">
-          ${infoItem('Experiencia', candidate.yearsOfExperience || 'No disponible')}
-          ${infoItem('Disponibilidad', candidate.availability)}
-          ${infoItem('Modalidad preferida', candidate.workMode)}
-          ${infoItem('Aspiración salarial', candidate.salaryExpectation)}
+          ${infoItem(t('filter.experience', { defaultValue: 'Experiencia' }), candidate.yearsOfExperience || t('profile.js.defaultTitle', { defaultValue: 'No disponible' }))}
+          ${infoItem(t('profile.form.availability', { defaultValue: 'Disponibilidad' }), candidate.availability)}
+          ${infoItem(t('profile.form.workMode', { defaultValue: 'Modalidad preferida' }), candidate.workMode)}
+          ${infoItem(t('candidate.presentation.salary', { defaultValue: 'Aspiración salarial' }), candidate.salaryExpectation)}
         </dl>
       </section>
 
       <section class="candidate-profile-section">
-        <h3>Información de contacto</h3>
+        <h3>${t('candidate.contact.title', { defaultValue: 'Información de contacto' })}</h3>
         <dl class="candidate-profile-info-grid">
-          <div class="candidate-profile-info"><dt>Correo electrónico</dt><dd>${hasEmail ? `<a href="mailto:${escapeHTML(candidate.email)}">${escapeHTML(candidate.email)}</a>` : 'No disponible'}</dd></div>
-          <div class="candidate-profile-info"><dt>Teléfono</dt><dd>${hasPhone ? `<a href="tel:${escapeHTML(candidate.phone)}">${escapeHTML(candidate.phone)}</a>` : 'No disponible'}</dd></div>
-          ${infoItem('Ubicación', candidate.location)}
-          <div class="candidate-profile-info"><dt>Portafolio</dt><dd>${hasPortfolio ? `<a href="${escapeHTML(candidate.portfolioUrl)}" target="_blank" rel="noopener noreferrer">Visitar portafolio</a>` : 'No disponible'}</dd></div>
-          <div class="candidate-profile-info"><dt>LinkedIn</dt><dd>${hasLinkedIn ? `<a href="${escapeHTML(candidate.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Ver LinkedIn</a>` : 'No disponible'}</dd></div>
+          <div class="candidate-profile-info"><dt>${t('profile.form.email', { defaultValue: 'Correo electrónico' })}</dt><dd>${hasEmail ? `<a href="mailto:${escapeHTML(candidate.email)}">${escapeHTML(candidate.email)}</a>` : t('profile.js.defaultTitle', { defaultValue: 'No disponible' })}</dd></div>
+          <div class="candidate-profile-info"><dt>${t('profile.form.phone', { defaultValue: 'Teléfono' })}</dt><dd>${hasPhone ? `<a href="tel:${escapeHTML(candidate.phone)}">${escapeHTML(candidate.phone)}</a>` : t('profile.js.defaultTitle', { defaultValue: 'No disponible' })}</dd></div>
+          ${infoItem(t('filter.location', { defaultValue: 'Ubicación' }), candidate.location)}
+          <div class="candidate-profile-info"><dt>${t('profile.form.portfolio', { defaultValue: 'Portafolio' })}</dt><dd>${hasPortfolio ? `<a href="${escapeHTML(candidate.portfolioUrl)}" target="_blank" rel="noopener noreferrer">${t('candidate.contact.visit_portfolio', { defaultValue: 'Visitar portafolio' })}</a>` : t('profile.js.defaultTitle', { defaultValue: 'No disponible' })}</dd></div>
+          <div class="candidate-profile-info"><dt>${t('profile.form.linkedin', { defaultValue: 'LinkedIn' })}</dt><dd>${hasLinkedIn ? `<a href="${escapeHTML(candidate.linkedinUrl)}" target="_blank" rel="noopener noreferrer">${t('candidate.contact.view_linkedin', { defaultValue: 'Ver LinkedIn' })}</a>` : t('profile.js.defaultTitle', { defaultValue: 'No disponible' })}</dd></div>
         </dl>
       </section>
 
-      <section class="candidate-profile-section"><h3>Experiencia profesional</h3>${experience}</section>
-      <section class="candidate-profile-section"><h3>Educación</h3>${education}</section>
+      <section class="candidate-profile-section"><h3>${t('candidate.experience.title', { defaultValue: 'Experiencia profesional' })}</h3>${experience}</section>
+      <section class="candidate-profile-section"><h3>${t('candidate.education.title', { defaultValue: 'Educación' })}</h3>${education}</section>
       <section class="candidate-profile-section">
-        <h3>Habilidades</h3>
-        ${candidate.skills.length ? `<div class="candidate-profile-skills">${candidate.skills.map(skill => `<span class="badge badge-active">${escapeHTML(skill)}</span>`).join('')}</div>` : '<p class="candidate-profile-empty">No hay habilidades registradas.</p>'}
+        <h3>${t('profile.form.skills', { defaultValue: 'Habilidades' })}</h3>
+        ${candidate.skills.length ? `<div class="candidate-profile-skills">${candidate.skills.map(skill => `<span class="badge badge-active">${escapeHTML(skill)}</span>`).join('')}</div>` : `<p class="candidate-profile-empty">${t('candidate.skills.empty', { defaultValue: 'No hay habilidades registradas.' })}</p>`}
       </section>
 
       <section class="candidate-profile-section">
-        <h3>Currículum</h3>
-        ${hasCv ? '<p class="candidate-profile-muted">Archivo de currículum disponible.</p>' : '<p class="candidate-profile-empty">Currículum no disponible.</p>'}
+        <h3>${t('candidate.cv.title', { defaultValue: 'Currículum' })}</h3>
+        ${hasCv ? `<p class="candidate-profile-muted">${t('candidate.cv.available', { defaultValue: 'Archivo de currículum disponible.' })}</p>` : `<p class="candidate-profile-empty">${t('candidate.cv.unavailable', { defaultValue: 'Currículum no disponible.' })}</p>`}
         <div class="candidate-profile-actions">
-          ${hasCv ? `<a class="btn btn-secondary" href="${escapeHTML(candidate.cvUrl)}" target="_blank" rel="noopener noreferrer">Ver currículum</a><a class="btn btn-secondary" href="${escapeHTML(candidate.cvUrl)}" download>Descargar CV</a>` : '<button class="btn btn-secondary" disabled>Ver currículum</button><button class="btn btn-secondary" disabled>Descargar CV</button>'}
+          ${hasCv ? `<a class="btn btn-secondary" href="${escapeHTML(candidate.cvUrl)}" target="_blank" rel="noopener noreferrer">${t('candidate.cv.view', { defaultValue: 'Ver currículum' })}</a><a class="btn btn-secondary" href="${escapeHTML(candidate.cvUrl)}" download>${t('candidate.cv.download', { defaultValue: 'Descargar CV' })}</a>` : `<button class="btn btn-secondary" disabled>${t('candidate.cv.view', { defaultValue: 'Ver currículum' })}</button><button class="btn btn-secondary" disabled>${t('candidate.cv.download', { defaultValue: 'Descargar CV' })}</button>`}
         </div>
       </section>
 
@@ -332,7 +332,7 @@ export function openCandidateProfile({ candidateId, candidate = null, onEdit = n
       return;
     }
     if (!activeOverlay || version !== requestVersion) return;
-    body.innerHTML = `<div class="candidate-profile-state" role="alert"><h3>No se pudo cargar el perfil</h3><p>${escapeHTML(response.message || 'Inténtalo nuevamente.')}</p><button class="btn btn-secondary candidate-profile-retry-btn">Reintentar</button></div>`;
+    body.innerHTML = `<div class="candidate-profile-state" role="alert"><h3>${t('candidate.error.load_single', { defaultValue: 'No se pudo cargar el perfil' })}</h3><p>${escapeHTML(response.message || t('job.error.retry', { defaultValue: 'Inténtalo nuevamente.' }))}</p><button class="btn btn-secondary candidate-profile-retry-btn">${t('job.retry', { defaultValue: 'Reintentar' })}</button></div>`;
     body.querySelector('.candidate-profile-retry-btn').addEventListener('click', loadProfile);
   };
 
