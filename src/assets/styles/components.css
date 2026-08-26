@@ -23,12 +23,8 @@
 
 .btn-primary {
   background-color: var(--color-accent);
-  color: #FFFFFF;
+  color: var(--color-on-accent, #FFFFFF);
   border-color: var(--color-accent);
-}
-
-[data-theme="contrast"] .btn-primary {
-  color: #050810;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -723,6 +719,49 @@ html[data-color-vision="tritanopia"] #filter-action-ai {
   color: #FFFFFF !important;
 }
 
+/* Daltonismo + Sepia: conserva el carácter cálido del tema con acentos adaptados. */
+html[data-theme="sepia"][data-color-vision] .btn-ai,
+html[data-theme="sepia"][data-color-vision] #filter-action-ai {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  border-color: var(--color-accent-hover);
+  color: var(--color-on-accent) !important;
+}
+
+/* Daltonismo + Alto contraste: mantiene contraste fuerte y texto legible. */
+html[data-theme="contrast"][data-color-vision] .btn-ai,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 0 0 2px var(--color-accent), 0 4px 14px color-mix(in srgb, var(--color-accent) 55%, transparent) !important;
+}
+
+html[data-theme="contrast"][data-color-vision] .btn-ai span,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai span,
+html[data-theme="contrast"][data-color-vision] .btn-ai svg,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai svg {
+  color: var(--color-on-accent) !important;
+  stroke: var(--color-on-accent) !important;
+}
+
+html[data-theme="contrast"][data-color-vision] .btn-ai:hover,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai:hover,
+html[data-theme="contrast"][data-color-vision] .btn-ai:focus-visible,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai:focus-visible {
+  background: var(--color-accent-hover) !important;
+  color: var(--color-on-accent) !important;
+  border-color: #FFFFFF !important;
+  box-shadow: 0 0 0 3px var(--color-accent), 0 6px 18px color-mix(in srgb, var(--color-accent) 60%, transparent) !important;
+}
+
+html[data-theme="contrast"][data-color-vision] .btn-ai:hover span,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai:hover span,
+html[data-theme="contrast"][data-color-vision] .btn-ai:hover svg,
+html[data-theme="contrast"][data-color-vision] #filter-action-ai:hover svg {
+  color: var(--color-on-accent) !important;
+  stroke: var(--color-on-accent) !important;
+}
+
 .ai-match-badge,
 .job-card-match {
   display: inline-flex;
@@ -742,6 +781,13 @@ html[data-theme="contrast"] .job-card-match {
   color: #050810 !important;
   border: 1px solid #FFFFFF !important;
   font-weight: 800 !important;
+}
+
+html[data-theme="contrast"][data-color-vision] .ai-match-badge,
+html[data-theme="contrast"][data-color-vision] .job-card-match {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+  border: 1px solid #FFFFFF !important;
 }
 
 .job-card-match {
@@ -2201,7 +2247,7 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
   width: 28px;
   height: 28px;
   background-color: var(--color-accent);
-  color: #FFFFFF;
+  color: var(--color-on-accent, #FFFFFF);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2284,8 +2330,7 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
 }
 
 .camera-video-elem {
-  transform: scaleX(-1);
-  /* Efecto espejo natural para selfies */
+  transform: scaleX(-1); /* Efecto espejo natural para selfies */
 }
 
 .camera-viewfinder-guide {
@@ -2331,20 +2376,9 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
 }
 
 @keyframes pulse-live {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-
-  50% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
 }
 
 .camera-error-message {
@@ -2365,7 +2399,7 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
 
 .btn-shutter {
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
-  color: #FFFFFF;
+  color: var(--color-on-accent, #FFFFFF);
   font-weight: 600;
   padding: var(--space-3) var(--space-5);
   border-radius: 30px;
