@@ -52,6 +52,10 @@ let vacancyOptions = [];
 const currentUser = authService.getCurrentUser();
 const canSelectVacancy = ['admin', 'recruiter'].includes(currentUser?.role);
 
+function canAccessVacancy(job) {
+  return currentUser?.role === 'admin' || (currentUser?.role === 'recruiter' && String(job.createdBy) === String(currentUser.id));
+}
+
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>'"]/g, character => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
@@ -265,7 +269,9 @@ const filterLayout = createFilterLayout({
 async function loadVacancyOptions() {
   const res = await vacantesService.getAll({ cursor: 0, limit: 100 });
   if (!res.ok) return;
-  vacancyOptions = (res.data || []).map(job => ({ value: String(job.id), label: job.title }));
+  vacancyOptions = (res.data || [])
+    .filter(canAccessVacancy)
+    .map(job => ({ value: String(job.id), label: job.title }));
   filterLayout.setOptions('vacancyId', vacancyOptions);
 }
 

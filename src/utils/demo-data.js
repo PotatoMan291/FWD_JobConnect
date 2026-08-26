@@ -9,6 +9,16 @@ const demoCandidates = [
   { id: 106, firstName: 'Andrés', lastName: 'Ferreira', professionalTitle: 'Cloud Solutions Architect', email: 'andres.ferreira@demo.jobconnect.com', phone: '+55 11 5555-0106', company: 'Cloud Norte', location: 'Brasil', about: 'Arquitecto cloud con experiencia en modernización y seguridad.', yearsOfExperience: '10 años', availability: '30 días', workMode: 'Presencial', salaryExpectation: '$5,000 USD', skills: ['Azure', 'Terraform', 'Kubernetes', 'Security'], recruitmentStatus: 'Entrevista' }
 ];
 
+const demoVacancies = [
+  { id: 1, createdBy: 3 },
+  { id: 2, createdBy: 3 },
+  { id: 3, createdBy: 4 },
+  { id: 4, createdBy: 4 },
+  { id: 6, createdBy: 7 },
+  { id: 7, createdBy: 7 },
+  { id: 8, createdBy: 8 }
+];
+
 const demoApplications = [
   { id: 9101, vacancyId: 1, userId: 101, status: 'Entrevista' },
   { id: 9102, vacancyId: 1, userId: 102, status: 'Nuevo' },
@@ -32,5 +42,6 @@ function seedStore(resourceKey, items) {
 
 export function seedDemoData() {
   seedStore('candidatos', demoCandidates);
+  seedStore('vacantes', demoVacancies);
   seedStore('postulaciones', demoApplications);
 }

@@ -198,6 +198,15 @@ export function createFilterLayout({
 
   renderFilterContent();
 
+  return {
+    setOptions(key, options = []) {
+      const field = fields.find(item => item.key === key);
+      if (!field) return;
+      field.options = options;
+      renderFilterContent();
+    }
+  };
+
   if (!container.dataset.languageChangeBound) {
     window.addEventListener('languagechange', renderFilterContent);
     container.dataset.languageChangeBound = 'true';
