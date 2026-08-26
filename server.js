@@ -35,7 +35,8 @@ function loadEnvFile() {
 loadEnvFile();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -265,6 +266,10 @@ app.put('/api/users/:id', (req, res) => {
   const idx = candidatos.findIndex(c => String(c.id) === String(req.params.id));
   if (idx === -1) return res.status(404).json({ message: 'Candidato no encontrado' });
   candidatos[idx] = { id: parseInt(req.params.id, 10), ...req.body };
+  const userIdx = USERS_DB.findIndex(u => String(u.id) === String(req.params.id));
+  if (userIdx !== -1) {
+    USERS_DB[userIdx] = { ...USERS_DB[userIdx], ...req.body };
+  }
   res.json(candidatos[idx]);
 });
 
@@ -272,6 +277,10 @@ app.patch('/api/users/:id', (req, res) => {
   const idx = candidatos.findIndex(c => String(c.id) === String(req.params.id));
   if (idx === -1) return res.status(404).json({ message: 'Candidato no encontrado' });
   candidatos[idx] = { ...candidatos[idx], ...req.body };
+  const userIdx = USERS_DB.findIndex(u => String(u.id) === String(req.params.id));
+  if (userIdx !== -1) {
+    USERS_DB[userIdx] = { ...USERS_DB[userIdx], ...req.body };
+  }
   res.json(candidatos[idx]);
 });
 

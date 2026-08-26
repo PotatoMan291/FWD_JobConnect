@@ -420,15 +420,15 @@
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   background: var(--color-surface);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
-  border-bottom: none;
-  border-top-left-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
 }
 
 .filter-inputs {
@@ -437,30 +437,92 @@
   align-items: center;
   gap: var(--space-3);
   flex: 1;
+  min-width: 0;
 }
 
 .filter-search-wrapper {
   position: relative;
-  min-width: 240px;
-  flex: 1;
+  min-width: 220px;
+  flex: 1 1 220px;
 }
 
 .filter-search-icon {
   position: absolute;
-  left: 10px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-ink-muted);
   pointer-events: none;
+  display: flex;
+  align-items: center;
 }
 
 .filter-search-input {
-  padding-left: 34px;
+  padding-left: 36px;
+  height: 38px;
+  border-radius: var(--radius-md);
 }
 
-.filter-actions {
+.filter-selects-grid {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 2 1 auto;
+}
+
+.filter-select-wrapper {
+  position: relative;
+  min-width: 140px;
+  flex: 1 1 140px;
+}
+
+.filter-custom-select {
+  width: 100%;
+  height: 38px;
+  padding: var(--space-2) 28px var(--space-2) var(--space-3);
+  font-size: var(--fs-small);
+  border-radius: var(--radius-md);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.filter-custom-select:hover {
+  border-color: var(--color-ink-muted);
+}
+
+.filter-custom-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+.filter-select-wrapper.has-value .filter-custom-select {
+  border-color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent-soft) 45%, var(--color-surface));
+  font-weight: 500;
+}
+
+.filter-select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-ink-muted);
+  display: flex;
+  align-items: center;
+}
+
+.filter-dates-group {
+  display: flex;
   align-items: center;
   gap: var(--space-2);
 }
@@ -469,35 +531,51 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 180px;
 }
 
 .filter-date-range {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: auto auto;
-  align-items: center;
-  column-gap: var(--space-2);
-  min-width: 260px;
-}
-
-.filter-date-range .filter-date-label {
-  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .filter-date-label {
   font-size: 0.7rem;
+  font-weight: 600;
   color: var(--color-ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
+.filter-date-inputs-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .filter-date-separator {
   color: var(--color-ink-muted);
+  font-weight: 500;
 }
 
 .filter-date-input {
-  min-width: 0;
+  height: 38px;
+  padding: 4px 8px;
+  font-size: var(--fs-small);
+  border-radius: var(--radius-md);
+  min-width: 120px;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.filter-actions .btn {
+  height: 38px;
+  border-radius: var(--radius-md);
 }
 
 .ai-match-badge,
@@ -1697,23 +1775,71 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
   gap: var(--space-3);
 }
 
-.filter-select-wrapper {
-  min-width: 160px;
-}
-
-.table-container {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-inline: contain;
-}
-
-.table {
-  min-width: 680px;
-}
-
 @media (max-width: 768px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .filter-inputs {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--space-3);
+  }
+
+  .filter-search-wrapper {
+    width: 100%;
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .filter-selects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    width: 100%;
+  }
+
   .filter-select-wrapper {
-    min-width: min(160px, 100%);
-    flex: 1 1 160px;
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .filter-dates-group {
+    width: 100%;
+  }
+
+  .filter-date-range {
+    width: 100%;
+  }
+
+  .filter-date-inputs-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    width: 100%;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .filter-date-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .filter-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .pagination-bar {
@@ -1760,15 +1886,6 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
     max-width: none;
   }
 
-  .filter-inputs>* {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .filter-bar>.btn {
-    width: 100%;
-  }
-
   .form-grid-2 {
     grid-template-columns: 1fr;
   }
@@ -1777,6 +1894,48 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
   .table td {
     padding: var(--space-2) var(--space-3);
   }
+}
+
+@media (max-width: 480px) {
+  .filter-selects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .filter-custom-select {
+    font-size: 0.8125rem;
+    padding-left: var(--space-2);
+    padding-right: 24px;
+    height: 38px;
+  }
+
+  .filter-date-inputs-row {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .filter-date-input {
+    font-size: 0.78rem;
+    padding: 4px 6px;
+  }
+
+  .filter-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-actions .btn span {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .filter-selects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    grid-template-columns: 1fr;
+  }
+}
 
   .modal-footer {
     align-items: stretch;
@@ -1834,3 +1993,230 @@ html[data-theme="dark"] .switcher-item[data-theme="dark"] {
     font-size: 0.82rem;
   }
 }
+
+/* ==========================================================================
+   Profile Photo Management & Camera Capture Styles
+   ========================================================================== */
+.profile-photo-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-photo-card:focus-within {
+  border-color: var(--color-accent);
+}
+
+.profile-photo-avatar-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  box-shadow: var(--shadow-md);
+}
+
+.profile-avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background-color: var(--color-surface-alt);
+  display: block;
+  transition: transform var(--transition-fast);
+}
+
+.profile-photo-avatar-wrapper:hover .profile-avatar-preview-img {
+  transform: scale(1.02);
+}
+
+.profile-avatar-overlay-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-photo-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile-photo-title {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.profile-photo-desc {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--color-ink-muted);
+  line-height: 1.4;
+}
+
+.profile-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.btn-file-trigger {
+  cursor: pointer;
+}
+
+.profile-photo-hint {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  display: block;
+}
+
+/* Modal de Cámara */
+.camera-modal-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.camera-preview-box {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  background-color: #0d1117;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  border: 2px solid var(--color-border);
+}
+
+.camera-video-elem,
+.camera-snapshot-elem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-video-elem {
+  transform: scaleX(-1); /* Efecto espejo natural para selfies */
+}
+
+.camera-viewfinder-guide {
+  position: absolute;
+  inset: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-viewfinder-guide::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.camera-status-indicator {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  backdrop-filter: blur(4px);
+}
+
+.camera-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  animation: pulse-live 1.5s infinite;
+}
+
+@keyframes pulse-live {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.camera-error-message {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--color-error);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+.camera-actions-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-shutter {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: var(--space-3) var(--space-5);
+  border-radius: 30px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.btn-shutter:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .profile-photo-card {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .profile-photo-actions {
+    justify-content: center;
+  }
+}

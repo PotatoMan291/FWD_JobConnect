@@ -42,7 +42,8 @@ export function createFilterLayout({
 
   const renderFilterContent = () => {
     const searchField = fields.find(field => field.type === 'text' || field.key === 'q' || field.key === 'search');
-    const otherFields = fields.filter(field => field !== searchField && field.type !== 'action');
+    const selectFields = fields.filter(field => field !== searchField && (field.type === 'select' || field.type === 'text') && field.type !== 'action');
+    const dateFields = fields.filter(field => field.type === 'date' || field.type === 'date-range');
     const actionFields = fields.filter(field => field.type === 'action');
 
     container.innerHTML = `
@@ -61,54 +62,72 @@ export function createFilterLayout({
             </div>
           ` : ''}
 
-          ${otherFields.map(field => {
-            if (field.type === 'select') {
-              return `
-                <div class="filter-select-wrapper">
-                  <select id="filter-${field.key}" class="select" aria-label="${escapeAttr(fieldLabel(field))}">
-                    <option value="">${escapeAttr(fieldLabel(field))}</option>
-                    ${(field.options || []).map(opt => `
-                      <option value="${escapeAttr(opt.value)}" ${String(currentFilters[field.key] || '') === String(opt.value) ? 'selected' : ''}>
-                        ${escapeAttr(optionLabel(opt))}
-                      </option>
-                    `).join('')}
-                  </select>
-                </div>
-              `;
-            }
+          ${selectFields.length > 0 ? `
+            <div class="filter-selects-grid">
+              ${selectFields.map(field => {
+                if (field.type === 'select') {
+                  const isSelected = Boolean(currentFilters[field.key]);
+                  return `
+                    <div class="filter-select-wrapper ${isSelected ? 'has-value' : ''}">
+                      <select id="filter-${field.key}" class="select filter-custom-select" aria-label="${escapeAttr(fieldLabel(field))}">
+                        <option value="">${escapeAttr(fieldLabel(field))}</option>
+                        ${(field.options || []).map(opt => `
+                          <option value="${escapeAttr(opt.value)}" ${String(currentFilters[field.key] || '') === String(opt.value) ? 'selected' : ''}>
+                            ${escapeAttr(optionLabel(opt))}
+                          </option>
+                        `).join('')}
+                      </select>
+                      <span class="filter-select-arrow" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </span>
+                    </div>
+                  `;
+                }
 
-            if (field.type === 'date') {
-              return `
-                <label class="filter-date-wrapper">
-                  <span class="filter-date-label">${escapeAttr(fieldLabel(field))}</span>
-                  <input type="date" id="filter-${field.key}" class="input filter-date-input" value="${escapeAttr(currentFilters[field.key] || '')}" />
-                </label>
-              `;
-            }
+                if (field.type === 'text') {
+                  return `
+                    <div class="filter-select-wrapper">
+                      <input type="text" id="filter-${field.key}" class="input" placeholder="${escapeAttr(fieldLabel(field))}" value="${escapeAttr(currentFilters[field.key] || '')}" />
+                    </div>
+                  `;
+                }
 
-            if (field.type === 'date-range') {
-              const fromKey = field.fromKey || `${field.key}From`;
-              const toKey = field.toKey || `${field.key}To`;
-              return `
-                <div class="filter-date-range" role="group" aria-label="${escapeAttr(fieldLabel(field))}">
-                  <span class="filter-date-label">${escapeAttr(fieldLabel(field))}</span>
-                  <input type="date" id="filter-${fromKey}" class="input filter-date-input" value="${escapeAttr(currentFilters[fromKey] || '')}" aria-label="${escapeAttr(t('filter.date.from'))}" />
-                  <span class="filter-date-separator">–</span>
-                  <input type="date" id="filter-${toKey}" class="input filter-date-input" value="${escapeAttr(currentFilters[toKey] || '')}" aria-label="${escapeAttr(t('filter.date.to'))}" />
-                </div>
-              `;
-            }
+                return '';
+              }).join('')}
+            </div>
+          ` : ''}
 
-            if (field.type === 'text') {
-              return `
-                <div class="filter-select-wrapper">
-                  <input type="text" id="filter-${field.key}" class="input" placeholder="${escapeAttr(fieldLabel(field))}" value="${escapeAttr(currentFilters[field.key] || '')}" />
-                </div>
-              `;
-            }
+          ${dateFields.length > 0 ? `
+            <div class="filter-dates-group">
+              ${dateFields.map(field => {
+                if (field.type === 'date') {
+                  return `
+                    <label class="filter-date-wrapper">
+                      <span class="filter-date-label">${escapeAttr(fieldLabel(field))}</span>
+                      <input type="date" id="filter-${field.key}" class="input filter-date-input" value="${escapeAttr(currentFilters[field.key] || '')}" />
+                    </label>
+                  `;
+                }
 
-            return '';
-          }).join('')}
+                if (field.type === 'date-range') {
+                  const fromKey = field.fromKey || `${field.key}From`;
+                  const toKey = field.toKey || `${field.key}To`;
+                  return `
+                    <div class="filter-date-range" role="group" aria-label="${escapeAttr(fieldLabel(field))}">
+                      <span class="filter-date-label">${escapeAttr(fieldLabel(field))}</span>
+                      <div class="filter-date-inputs-row">
+                        <input type="date" id="filter-${fromKey}" class="input filter-date-input" value="${escapeAttr(currentFilters[fromKey] || '')}" aria-label="${escapeAttr(t('filter.date.from'))}" />
+                        <span class="filter-date-separator">–</span>
+                        <input type="date" id="filter-${toKey}" class="input filter-date-input" value="${escapeAttr(currentFilters[toKey] || '')}" aria-label="${escapeAttr(t('filter.date.to'))}" />
+                      </div>
+                    </div>
+                  `;
+                }
+
+                return '';
+              }).join('')}
+            </div>
+          ` : ''}
         </div>
 
         <div class="filter-actions">
