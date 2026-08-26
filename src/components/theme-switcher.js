@@ -5,18 +5,17 @@ export function renderThemeSwitcher(container) {
   if (!container) return;
 
   const currentTheme = getTheme();
-  const currentObj = THEMES.find(t => t.id === currentTheme) || THEMES[0];
 
   const html = `
     <div class="switcher-dropdown" id="theme-dropdown">
       <button class="btn btn-secondary btn-icon" id="theme-btn" title="Cambiar Tema Visual">
         ${icons.theme}
-        <span class="theme-dot" style="background-color: ${currentObj.color};"></span>
+        <span>Temas</span>
       </button>
       <div class="switcher-menu">
         ${THEMES.map(theme => `
           <button class="switcher-item ${theme.id === currentTheme ? 'is-active' : ''}" data-theme="${theme.id}" aria-pressed="${theme.id === currentTheme}">
-            <span class="theme-dot" style="--theme-dot-color: ${theme.color}; background-color: ${theme.color};"></span>
+            <span class="theme-dot" style="--theme-dot-color: ${theme.color}; --theme-dot-border: ${theme.borderColor}; background-color: ${theme.color}; border-color: ${theme.borderColor};"></span>
             <span class="theme-name">${theme.name}</span>
           </button>
         `).join('')}
