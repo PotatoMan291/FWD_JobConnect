@@ -578,6 +578,151 @@
   border-radius: var(--radius-md);
 }
 
+/* ==========================================================================
+   AI Filter Button & Badges Styling across all themes
+   ========================================================================== */
+.btn-ai,
+#filter-action-ai {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  color: #FFFFFF !important;
+  border: 1px solid var(--color-accent-hover);
+  font-weight: 600;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-accent) 30%, transparent);
+  transition: all var(--transition-fast);
+}
+
+.btn-ai svg,
+#filter-action-ai svg {
+  color: #FFD34E;
+  transition: transform var(--transition-fast);
+}
+
+.btn-ai:hover,
+#filter-action-ai:hover {
+  background: linear-gradient(135deg, var(--color-accent-hover), var(--color-accent));
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+.btn-ai:hover svg,
+#filter-action-ai:hover svg {
+  transform: scale(1.15) rotate(10deg);
+}
+
+/* Tema Dark */
+html[data-theme="dark"] .btn-ai,
+html[data-theme="dark"] #filter-action-ai {
+  background: linear-gradient(135deg, #1C5446 0%, #297562 100%);
+  color: #FFFFFF !important;
+  border-color: #5FAE94;
+  box-shadow: 0 2px 10px rgba(95, 174, 148, 0.3);
+}
+
+html[data-theme="dark"] .btn-ai:hover,
+html[data-theme="dark"] #filter-action-ai:hover {
+  background: linear-gradient(135deg, #246B59 0%, #368F79 100%);
+  border-color: #78C2A9;
+  box-shadow: 0 4px 16px rgba(95, 174, 148, 0.45);
+}
+
+html[data-theme="dark"] .btn-ai svg,
+html[data-theme="dark"] #filter-action-ai svg {
+  color: #FFE58A;
+}
+
+/* Tema Sepia */
+html[data-theme="sepia"] .btn-ai,
+html[data-theme="sepia"] #filter-action-ai {
+  background: linear-gradient(135deg, #8C4A2B 0%, #A85D38 100%);
+  color: #FFFFFF !important;
+  border-color: #6E3A20;
+  box-shadow: 0 2px 8px rgba(140, 74, 43, 0.25);
+}
+
+html[data-theme="sepia"] .btn-ai:hover,
+html[data-theme="sepia"] #filter-action-ai:hover {
+  background: linear-gradient(135deg, #6E3A20 0%, #8C4A2B 100%);
+  border-color: #542B16;
+  box-shadow: 0 4px 14px rgba(140, 74, 43, 0.35);
+}
+
+html[data-theme="sepia"] .btn-ai svg,
+html[data-theme="sepia"] #filter-action-ai svg {
+  color: #FFD34E;
+}
+
+/* Tema High Contrast - Máxima visibilidad y contraste AAA */
+html[data-theme="contrast"] .btn-ai,
+html[data-theme="contrast"] #filter-action-ai {
+  background: #FFD34E !important;
+  color: #050810 !important;
+  border: 2px solid #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 0 2px #FFD34E, 0 4px 14px rgba(255, 211, 78, 0.6) !important;
+}
+
+html[data-theme="contrast"] .btn-ai span,
+html[data-theme="contrast"] #filter-action-ai span {
+  color: #050810 !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="contrast"] .btn-ai svg,
+html[data-theme="contrast"] #filter-action-ai svg {
+  color: #050810 !important;
+  stroke: #050810 !important;
+}
+
+html[data-theme="contrast"] .btn-ai:hover,
+html[data-theme="contrast"] #filter-action-ai:hover,
+html[data-theme="contrast"] .btn-ai:focus-visible,
+html[data-theme="contrast"] #filter-action-ai:focus-visible {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  border-color: #FFD34E !important;
+  box-shadow: 0 0 0 3px #FFFFFF, 0 6px 18px rgba(255, 255, 255, 0.7) !important;
+}
+
+html[data-theme="contrast"] .btn-ai:hover span,
+html[data-theme="contrast"] #filter-action-ai:hover span,
+html[data-theme="contrast"] .btn-ai:hover svg,
+html[data-theme="contrast"] #filter-action-ai:hover svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
+html[data-theme="contrast"] .btn-clear-filters,
+html[data-theme="contrast"] #clear-filters-btn {
+  background: #0A1020 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #6B83B5 !important;
+}
+
+html[data-theme="contrast"] .btn-clear-filters:hover,
+html[data-theme="contrast"] #clear-filters-btn:hover {
+  background: #182647 !important;
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+/* Soporte de daltonismo */
+html[data-color-vision="protanopia"] .btn-ai,
+html[data-color-vision="protanopia"] #filter-action-ai,
+html[data-color-vision="deuteranopia"] .btn-ai,
+html[data-color-vision="deuteranopia"] #filter-action-ai {
+  background: linear-gradient(135deg, #1769AA 0%, #2680CA 100%);
+  border-color: #115386;
+  color: #FFFFFF !important;
+}
+
+html[data-color-vision="tritanopia"] .btn-ai,
+html[data-color-vision="tritanopia"] #filter-action-ai {
+  background: linear-gradient(135deg, #9A3E78 0%, #B44A8C 100%);
+  border-color: #742D5A;
+  color: #FFFFFF !important;
+}
+
 .ai-match-badge,
 .job-card-match {
   display: inline-flex;
@@ -588,6 +733,15 @@
   color: var(--color-accent);
   font-size: 0.75rem;
   font-weight: 700;
+}
+
+/* AI Match Badges en tema de alto contraste */
+html[data-theme="contrast"] .ai-match-badge,
+html[data-theme="contrast"] .job-card-match {
+  background: #FFD34E !important;
+  color: #050810 !important;
+  border: 1px solid #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 .job-card-match {
