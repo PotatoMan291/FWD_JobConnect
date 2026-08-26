@@ -132,12 +132,12 @@ export function createFilterLayout({
 
         <div class="filter-actions">
           ${actionFields.map(field => `
-            <button type="button" id="filter-action-${field.key}" class="btn ${field.variant === 'secondary' ? 'btn-secondary' : 'btn-primary'} btn-icon" title="${escapeAttr(t(field.labelKey) || field.label || '')}">
+            <button type="button" id="filter-action-${field.key}" class="btn ${field.variant === 'secondary' ? 'btn-secondary' : 'btn-primary'} ${field.key === 'ai' ? 'btn-ai' : ''}" title="${escapeAttr(t(field.labelKey) || field.label || '')}">
               ${field.icon && icons[field.icon] ? icons[field.icon] : icons.sparkles}
               <span>${escapeAttr(t(field.labelKey) || field.label || '')}</span>
             </button>
           `).join('')}
-          <button id="clear-filters-btn" class="btn btn-secondary btn-icon" title="${t('filter.clear')}">
+          <button id="clear-filters-btn" class="btn btn-secondary btn-clear-filters" title="${t('filter.clear')}">
             ${icons.close}
             <span>${t('filter.clear')}</span>
           </button>
