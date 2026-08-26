@@ -1,10 +1,10 @@
 import { storage } from './storage.js';
 
 export const THEMES = [
-  { id: 'light', name: 'Claro', color: '#F6F4EF' },
-  { id: 'dark', name: 'Oscuro', color: '#181613' },
-  { id: 'sepia', name: 'Sepia', color: '#F1E7D2' },
-  { id: 'contrast', name: 'Alto Contraste', color: '#0B1220' }
+  { id: 'light', name: 'Claro', color: '#F6F4EF', borderColor: '#7A746B' },
+  { id: 'dark', name: 'Oscuro', color: '#181613', borderColor: '#D8D2C8' },
+  { id: 'sepia', name: 'Sepia', color: '#F1E7D2', borderColor: '#8A6841' },
+  { id: 'contrast', name: 'Alto Contraste', color: '#0B5FFF', borderColor: '#FFD34E' }
 ];
 
 export function getTheme() {
