@@ -60,8 +60,12 @@ const USERS_DB = [
   { id: 2, username: 'michaelw', password: 'michaelwpass', firstName: 'Michael', lastName: 'Williams', email: 'michael.williams@jobconnect.com', role: 'admin', image: '/public/avatars/michaelw.svg' },
   { id: 3, username: 'sophiab', password: 'sophiabpass', firstName: 'Sophia', lastName: 'Brown', email: 'sophia.brown@jobconnect.com', role: 'recruiter', image: '/public/avatars/sophiab.svg' },
   { id: 4, username: 'jamesd', password: 'jamesdpass', firstName: 'James', lastName: 'Davis', email: 'james.davis@jobconnect.com', role: 'recruiter', image: '/public/avatars/jamesd.svg' },
+  { id: 7, username: 'mariag', password: 'mariagpass', firstName: 'Maria', lastName: 'Gomez', email: 'maria.gomez@jobconnect.com', role: 'recruiter', image: '/public/avatars/sophiab.svg' },
+  { id: 8, username: 'carlosr', password: 'carlosrpass', firstName: 'Carlos', lastName: 'Ramirez', email: 'carlos.ramirez@jobconnect.com', role: 'recruiter', image: '/public/avatars/jamesd.svg' },
   { id: 5, username: 'oliviaw', password: 'oliviawpass', firstName: 'Olivia', lastName: 'Wilson', email: 'olivia.wilson@jobconnect.com', role: 'user', image: '/public/avatars/oliviaw.svg' },
-  { id: 6, username: 'benjaminw', password: 'benjaminwpass', firstName: 'Benjamin', lastName: 'Wilson', email: 'benjamin.wilson@jobconnect.com', role: 'user', image: '/public/avatars/benjaminw.svg' }
+  { id: 6, username: 'benjaminw', password: 'benjaminwpass', firstName: 'Benjamin', lastName: 'Wilson', email: 'benjamin.wilson@jobconnect.com', role: 'user', image: '/public/avatars/benjaminw.svg' },
+  { id: 9, username: 'danielm', password: 'danielmpass', firstName: 'Daniel', lastName: 'Mora', email: 'daniel.mora@jobconnect.com', role: 'user', image: '/public/avatars/oliviaw.svg' },
+  { id: 10, username: 'luciap', password: 'luciapass', firstName: 'Lucia', lastName: 'Perez', email: 'lucia.perez@jobconnect.com', role: 'user', image: '/public/avatars/benjaminw.svg' }
 ];
 
 // Seed data para Candidatos (/api/users)
@@ -95,14 +99,14 @@ candidatos = candidatos.map(candidato => ({ ...candidato, ...CANDIDATE_DETAILS[c
 
 // Seed data para Vacantes (/api/products)
 let vacantes = [
-  { id: 1, title: 'Senior Fullstack Developer (Node.js & React)', category: 'Ingeniería de Software', price: 6500, stock: 3, description: 'Búsqueda ejecutiva para líder técnico con experiencia en arquitecturas distribuidas.' },
-  { id: 2, title: 'Lead UX/UI Product Designer', category: 'Diseño & Producto', price: 5800, stock: 2, description: 'Diseño de interfaces complejas para plataformas analíticas de talento.' },
-  { id: 3, title: 'Cloud Infrastructure & Security Architect', category: 'Infraestructura Cloud', price: 7200, stock: 1, description: 'Diseño e implementación de clusters AWS/GCP con altos estándares de cumplimiento.' },
-  { id: 4, title: 'Director de Reclutamiento IT & Talent Acquisition', category: 'Recursos Humanos', price: 8000, stock: 1, description: 'Liderazgo de equipo regional de adquisición de talento tecnológico.' },
-  { id: 5, title: 'Senior Data Engineer (Spark & Snowflake)', category: 'Ciencia de Datos', price: 6200, stock: 4, description: 'Modelado y tuberías de datos para plataformas de inteligencia de mercado.' },
-  { id: 6, title: 'QA Automation Lead Engineer (Playwright/Cypress)', category: 'Control de Calidad', price: 4900, stock: 2, description: 'Estrategia de automatización de pruebas end-to-end e integración continua.' },
-  { id: 7, title: 'DevOps & Site Reliability Engineer (SRE)', category: 'Operaciones IT', price: 6100, stock: 3, description: 'Monitoreo de alta disponibilidad, Kubernetes y Terraform.' },
-  { id: 8, title: 'Mobile iOS Lead Architect (Swift/SwiftUI)', category: 'Desarrollo Móvil', price: 6400, stock: 2, description: 'Desarrollo de aplicaciones nativas de alto rendimiento para banca privada.' }
+  { id: 1, createdBy: 3, title: 'Senior Fullstack Developer (Node.js & React)', category: 'Ingeniería de Software', price: 6500, stock: 3, description: 'Búsqueda ejecutiva para líder técnico con experiencia en arquitecturas distribuidas.' },
+  { id: 2, createdBy: 3, title: 'Lead UX/UI Product Designer', category: 'Diseño & Producto', price: 5800, stock: 2, description: 'Diseño de interfaces complejas para plataformas analíticas de talento.' },
+  { id: 3, createdBy: 4, title: 'Cloud Infrastructure & Security Architect', category: 'Infraestructura Cloud', price: 7200, stock: 1, description: 'Diseño e implementación de clusters AWS/GCP con altos estándares de cumplimiento.' },
+  { id: 4, createdBy: 4, title: 'Director de Reclutamiento IT & Talent Acquisition', category: 'Recursos Humanos', price: 8000, stock: 1, description: 'Liderazgo de equipo regional de adquisición de talento tecnológico.' },
+  { id: 5, createdBy: 3, title: 'Senior Data Engineer (Spark & Snowflake)', category: 'Ciencia de Datos', price: 6200, stock: 4, description: 'Modelado y tuberías de datos para plataformas de inteligencia de mercado.' },
+  { id: 6, createdBy: 7, title: 'QA Automation Lead Engineer (Playwright/Cypress)', category: 'Control de Calidad', price: 4900, stock: 2, description: 'Estrategia de automatización de pruebas end-to-end e integración continua.' },
+  { id: 7, createdBy: 7, title: 'DevOps & Site Reliability Engineer (SRE)', category: 'Operaciones IT', price: 6100, stock: 3, description: 'Monitoreo de alta disponibilidad, Kubernetes y Terraform.' },
+  { id: 8, createdBy: 8, title: 'Mobile iOS Lead Architect (Swift/SwiftUI)', category: 'Desarrollo Móvil', price: 6400, stock: 2, description: 'Desarrollo de aplicaciones nativas de alto rendimiento para banca privada.' }
 ];
 
 // Seed data para Empresas / Cuentas Corporativas (/api/carts)
@@ -135,7 +139,10 @@ let postulaciones = [
   { id: 5, title: 'Postulación a Senior Data Engineer', body: 'Experiencia en pipelines, calidad de datos y modelado analítico para plataformas de inteligencia de mercado.', userId: 8, vacancyId: 5, createdAt: '2026-08-19', views: 54 },
   { id: 6, title: 'Postulación a DevOps & SRE', body: 'Arquitecta DevOps con foco en confiabilidad, observabilidad y automatización de infraestructura.', userId: 9, vacancyId: 7, createdAt: '2026-08-21', views: 41 },
   { id: 7, title: 'Postulación a QA Automation Lead', body: 'Candidato fullstack con interés en calidad, automatización y entrega continua.', userId: 6, vacancyId: 6, createdAt: '2026-08-20', views: 33 },
-  { id: 8, title: 'Postulación a Director de Reclutamiento IT', body: 'Consultor senior de talento con experiencia en selección ejecutiva y métricas de contratación.', userId: 2, vacancyId: 4, createdAt: '2026-08-18', views: 61 }
+  { id: 8, title: 'Postulación a Director de Reclutamiento IT', body: 'Consultor senior de talento con experiencia en selección ejecutiva y métricas de contratación.', userId: 2, vacancyId: 4, createdAt: '2026-08-18', views: 61 },
+  { id: 9, title: 'Postulación QA Automation', body: 'Experiencia en automatización y calidad continua.', userId: 9, vacancyId: 6, createdAt: '2026-08-22', views: 44 },
+  { id: 10, title: 'Postulación DevOps SRE', body: 'Perfil orientado a confiabilidad y plataformas cloud.', userId: 10, vacancyId: 7, createdAt: '2026-08-22', views: 38 },
+  { id: 11, title: 'Postulación Mobile iOS', body: 'Arquitectura móvil y liderazgo técnico.', userId: 6, vacancyId: 8, createdAt: '2026-08-23', views: 29 }
 ];
 
 // Seed data para Entrevistas / Feedback (/api/comments)

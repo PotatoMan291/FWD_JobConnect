@@ -3,6 +3,8 @@ import { buildQueryParams } from '../utils/query-params.js';
 import { mergeDemoList, addDemoItem, updateDemoItem, deleteDemoItem, getDemoStore } from '../utils/demo-store.js';
 import { applyRecordFilters } from '../utils/apply-filters.js';
 import { seedDemoData } from '../utils/demo-data.js';
+import { authService } from './auth-service.js';
+import { vacantesService } from './vacantes-service.js';
 
 const RESOURCE = '/users';
 
@@ -83,6 +85,14 @@ export const candidatosService = {
   async getAll({ cursor = 0, limit = 10, q = '', filters = {} } = {}) {
     seedDemoData();
     const { vacancyId, ...restFilters } = filters;
+    const currentUser = authService.getCurrentUser();
+    let ownedVacancyIds = null;
+    if (currentUser?.role === 'recruiter') {
+      const vacancies = await vacantesService.getAll({ cursor: 0, limit: 1000 });
+      ownedVacancyIds = new Set((vacancies.data || [])
+        .filter(vacancy => String(vacancy.createdBy) === String(currentUser.id))
+        .map(vacancy => String(vacancy.id)));
+    }
     const query = buildQueryParams({ limit: 1000, skip: 0, q, filters: { ...restFilters, vacancyId } });
     const endpoint = q ? `${RESOURCE}/search${query}` : `${RESOURCE}${query}`;
     const res = await httpClient(endpoint);
@@ -111,6 +121,14 @@ export const candidatosService = {
         const applicantIds = new Set(
           posts.filter(post => String(post.vacancyId) === String(vacancyId)).map(post => String(post.userId))
         );
+        finalData = finalData.filter(candidate => applicantIds.has(String(candidate.id)) &&
+          (!ownedVacancyIds || ownedVacancyIds.has(String(vacancyId))));
+      } else if (ownedVacancyIds) {
+        const postsRes = await httpClient('/posts?limit=1000&skip=0');
+        const posts = mergeDemoList('postulaciones', postsRes.ok ? (postsRes.data?.posts || []) : []);
+        const applicantIds = new Set(posts
+          .filter(post => ownedVacancyIds.has(String(post.vacancyId)))
+          .map(post => String(post.userId)));
         finalData = finalData.filter(candidate => applicantIds.has(String(candidate.id)));
       }
 
