@@ -9,7 +9,7 @@ export function openCandidatoForm({ item = null, onSave }) {
   const companyValue = typeof item?.company === 'string' ? item.company : item?.company?.name || '';
   const initialPhotoLetters = `${item?.firstName?.[0] || ''}${item?.lastName?.[0] || ''}`.toUpperCase() || '?';
   const initialPhotoPreview = item?.image
-    ? `<img src="${item.image}" alt="Foto actual del candidato">`
+    ? `<img src="${item.image}" alt="${t('candidatos.form.photo.alt_current')}">`
     : `<span class="candidate-photo-initials">${initialPhotoLetters}</span>`;
 
   const bodyHTML = `
@@ -20,18 +20,18 @@ export function openCandidatoForm({ item = null, onSave }) {
         </div>
         <div class="candidate-photo-controls">
           <div class="form-group">
-            <label for="candidate-image">Foto del candidato</label>
+            <label for="candidate-image" data-i18n="candidatos.form.photo">${t('candidatos.form.photo')}</label>
             <input type="file" id="candidate-image" class="input" accept="image/*" capture="user">
-            <small>Selecciona una imagen o toma una foto desde tu dispositivo.</small>
+            <small data-i18n="candidatos.form.photo.desc">${t('candidatos.form.photo.desc')}</small>
           </div>
-          <button type="button" class="btn btn-secondary candidate-camera-btn">Tomar foto</button>
+          <button type="button" class="btn btn-secondary candidate-camera-btn">${t('candidatos.form.photo.take')}</button>
         </div>
       </div>
       <div class="candidate-camera-view" hidden>
         <video class="candidate-camera-video" autoplay playsinline></video>
         <div class="candidate-camera-actions">
-          <button type="button" class="btn btn-primary candidate-capture-btn">Capturar foto</button>
-          <button type="button" class="btn btn-secondary candidate-camera-close-btn">Cerrar cámara</button>
+          <button type="button" class="btn btn-primary candidate-capture-btn">${t('candidatos.form.photo.capture')}</button>
+          <button type="button" class="btn btn-secondary candidate-camera-close-btn">${t('candidatos.form.photo.close')}</button>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export function openCandidatoForm({ item = null, onSave }) {
       </div>
 
       <div class="form-group">
-        <label for="company" data-i18n="candidatos.form.company">Empresa Actual</label>
+        <label for="company" data-i18n="candidatos.form.company">${t('candidatos.form.company')}</label>
         <input type="text" id="company" class="input" autocomplete="organization" value="${companyValue}" />
       </div>
     </form>
@@ -118,7 +118,7 @@ export function openCandidatoForm({ item = null, onSave }) {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         imageValue = reader.result;
-        imagePreview.innerHTML = `<img src="${imageValue}" alt="Vista previa de la foto seleccionada">`;
+        imagePreview.innerHTML = `<img src="${imageValue}" alt="${t('candidatos.form.photo.alt_selected')}">`;
       });
       reader.readAsDataURL(file);
     });
@@ -137,7 +137,7 @@ export function openCandidatoForm({ item = null, onSave }) {
         cameraVideo.srcObject = cameraStream;
         cameraView.hidden = false;
       } catch (error) {
-        showToast('No se pudo acceder a la cámara. Revisa los permisos del navegador.', 'error');
+        showToast(t('candidatos.js.cameraError'), 'error');
       }
     });
   }
@@ -149,7 +149,7 @@ export function openCandidatoForm({ item = null, onSave }) {
     canvas.height = cameraVideo.videoHeight;
     canvas.getContext('2d').drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
     imageValue = canvas.toDataURL('image/jpeg', 0.88);
-    imagePreview.innerHTML = `<img src="${imageValue}" alt="Vista previa de la foto tomada">`;
+    imagePreview.innerHTML = `<img src="${imageValue}" alt="${t('candidatos.form.photo.alt_taken')}">`;
     imageInput.value = '';
     stopCamera();
   });

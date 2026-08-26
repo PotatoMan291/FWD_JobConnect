@@ -1,6 +1,6 @@
 import '../../guards/auth-guard.js';
 import { initTheme } from '../../utils/theme.js';
-import { initI18n } from '../../utils/i18n.js';
+import { initI18n, t } from '../../utils/i18n.js';
 import { renderMenu } from '../../components/menu.js';
 import { renderThemeSwitcher } from '../../components/theme-switcher.js';
 import { renderAccessibilityMenu } from '../../components/accessibility-menu.js';
@@ -137,7 +137,7 @@ function populateForm(candidate) {
   setValue('about', candidate.about === 'Información profesional no disponible.' ? '' : candidate.about);
   setValue('linkedinUrl', candidate.linkedinUrl);
   setValue('portfolioUrl', candidate.portfolioUrl);
-  if (candidate.cvUrl) cvStatus.textContent = 'Ya tienes un currículum guardado. Selecciona otro para reemplazarlo.';
+  if (candidate.cvUrl) cvStatus.textContent = t('profile.js.cvExists');
 
   // Foto de perfil
   updateAvatarUI(candidate.image || currentUser?.image || '');
@@ -153,9 +153,9 @@ function updateLocationOptions(country, province = '', canton = '') {
   const cantonSelect = document.getElementById('canton');
   const countryData = locations[country] || {};
   const provinces = Object.keys(countryData);
-  fillSelect(provinceSelect, provinces, province, 'Selecciona una provincia o estado');
+  fillSelect(provinceSelect, provinces, province, t('profile.js.provincePh'));
   const cantons = countryData[province] || [];
-  fillSelect(cantonSelect, cantons, canton, 'Selecciona un cantón o ciudad');
+  fillSelect(cantonSelect, cantons, canton, t('profile.js.cantonPh'));
 }
 
 function renderSkills() {
@@ -175,7 +175,7 @@ function renderSkills() {
   });
 }
 
-fillSelect(document.getElementById('country'), Object.keys(locations), profile.country, 'Selecciona un país');
+fillSelect(document.getElementById('country'), Object.keys(locations), profile.country, t('profile.js.countryPh'));
 document.getElementById('country').addEventListener('change', event => updateLocationOptions(event.target.value));
 document.getElementById('province').addEventListener('change', event => {
   updateLocationOptions(document.getElementById('country').value, event.target.value);
@@ -206,12 +206,12 @@ profilePhotoFileInput?.addEventListener('change', async event => {
   if (!file) return;
 
   if (!file.type.startsWith('image/')) {
-    showToast('Por favor selecciona un archivo de imagen válido (JPG, PNG, WEBP).', 'error');
+    showToast(t('profile.js.photoInvalid'), 'error');
     return;
   }
 
   if (file.size > 5 * 1024 * 1024) {
-    showToast('La imagen no puede superar los 5 MB.', 'error');
+    showToast(t('profile.js.photoSize'), 'error');
     return;
   }
 
@@ -222,14 +222,14 @@ profilePhotoFileInput?.addEventListener('change', async event => {
       img.onload = () => {
         const optimizedDataUrl = processImageToSquare(img, 360);
         updateAvatarUI(optimizedDataUrl);
-        showToast('Foto cargada. Haz clic en "Guardar mi perfil" para confirmar.', 'success');
+        showToast(t('profile.js.photoLoaded'), 'success');
       };
-      img.onerror = () => showToast('Error al procesar la imagen.', 'error');
+      img.onerror = () => showToast(t('profile.js.photoError'), 'error');
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   } catch (err) {
-    showToast('No se pudo cargar la imagen seleccionada.', 'error');
+    showToast(t('profile.js.photoFailed'), 'error');
   }
 });
 
@@ -239,7 +239,7 @@ profilePhotoFileInput?.addEventListener('change', async event => {
 removePhotoBtn?.addEventListener('click', () => {
   updateAvatarUI('');
   if (profilePhotoFileInput) profilePhotoFileInput.value = '';
-  showToast('Foto eliminada. Guarda los cambios para confirmar.', 'info');
+  showToast(t('profile.js.photoRemoved'), 'info');
 });
 
 // ==========================================
@@ -260,7 +260,7 @@ function stopCameraStream() {
 
 async function openCameraModal() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showToast('Tu navegador o dispositivo no soporta acceso directo a la cámara.', 'error');
+    showToast(t('profile.js.cameraNoSupport'), 'error');
     return;
   }
 
@@ -272,11 +272,11 @@ async function openCameraModal() {
         <div id="camera-viewfinder" class="camera-viewfinder-guide"></div>
         <div id="camera-status" class="camera-status-indicator">
           <span class="camera-status-dot"></span>
-          <span>En vivo</span>
+          <span>${t('profile.js.cameraLive')}</span>
         </div>
       </div>
       <p id="camera-hint" style="font-size: var(--fs-small); color: var(--color-ink-muted); text-align: center; margin: 0;">
-        Centra tu rostro dentro del círculo guía y presiona <strong>Capturar foto</strong>.
+        ${t('profile.js.cameraHint')}
       </p>
       <div id="camera-error-container" style="display: none;" class="camera-error-message"></div>
     </div>
@@ -284,24 +284,24 @@ async function openCameraModal() {
 
   const modalFooter = `
     <div class="camera-actions-toolbar">
-      <button type="button" id="camera-cancel-btn" class="btn btn-secondary">Cancelar</button>
+      <button type="button" id="camera-cancel-btn" class="btn btn-secondary">${t('profile.js.cameraCancel')}</button>
       <button type="button" id="camera-capture-btn" class="btn btn-shutter" disabled>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
-        <span>Capturar foto</span>
+        <span>${t('profile.js.cameraCaptureBtn')}</span>
       </button>
       <button type="button" id="camera-retake-btn" class="btn btn-secondary" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-        <span>Tomar otra</span>
+        <span>${t('profile.js.cameraRetakeBtn')}</span>
       </button>
       <button type="button" id="camera-confirm-btn" class="btn btn-primary" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Usar esta foto</span>
+        <span>${t('profile.js.cameraConfirmBtn')}</span>
       </button>
     </div>
   `;
 
   openModal({
-    title: 'Tomar foto con la cámara',
+    title: t('profile.js.cameraModalTitle'),
     bodyHTML: modalBody,
     footerHTML: modalFooter,
     onClose: () => {
@@ -349,9 +349,9 @@ async function openCameraModal() {
       errorContainer.style.display = 'block';
       let msg = 'No se pudo acceder a la cámara. ';
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        msg += 'Permiso denegado por el navegador. Habilita los permisos de cámara e intenta de nuevo.';
+        msg = t('profile.js.cameraErrorPerm');
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        msg += 'No se encontró ningún dispositivo de cámara conectado.';
+        msg = t('profile.js.cameraErrorNotFound');
       } else {
         msg += (err.message || 'Verifica que tu cámara no esté en uso por otra aplicación.');
       }
@@ -378,7 +378,7 @@ async function openCameraModal() {
     if (statusIndicator) statusIndicator.style.display = 'none';
 
     if (hintText) {
-      hintText.innerHTML = '¿Te gusta cómo quedó tu foto? Puedes aceptarla o intentar otra toma.';
+      hintText.innerHTML = t('profile.js.cameraConfirmHint');
     }
 
     if (captureBtn) captureBtn.style.display = 'none';
@@ -395,7 +395,7 @@ async function openCameraModal() {
     if (statusIndicator) statusIndicator.style.display = 'inline-flex';
 
     if (hintText) {
-      hintText.innerHTML = 'Centra tu rostro dentro del círculo guía y presiona <strong>Capturar foto</strong>.';
+      hintText.innerHTML = t('profile.js.cameraHint');
     }
 
     if (captureBtn) captureBtn.style.display = 'inline-flex';
@@ -407,7 +407,7 @@ async function openCameraModal() {
   confirmBtn?.addEventListener('click', () => {
     if (capturedDataUrl) {
       updateAvatarUI(capturedDataUrl);
-      showToast('¡Foto tomada con éxito! Haz clic en "Guardar mi perfil" para confirmar.', 'success');
+      showToast(t('profile.js.cameraSuccess'), 'success');
     }
     stopCameraStream();
     closeModal();
@@ -430,7 +430,7 @@ function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+    reader.onerror = () => reject(new Error(t('profile.js.cvError')));
     reader.readAsDataURL(file);
   });
 }
@@ -442,7 +442,7 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
   const file = cvFile.files[0];
   if (file && file.size > 5 * 1024 * 1024) {
-    showToast('El archivo no puede superar los 5 MB.', 'error');
+    showToast(t('profile.js.cvSize'), 'error');
     return;
   }
 
@@ -480,7 +480,7 @@ form.addEventListener('submit', async event => {
 
   const result = await candidatosService.update(currentUser.id, payload);
   if (!result.ok) {
-    showToast(result.message || 'No se pudo guardar el perfil.', 'error');
+    showToast(result.message || t('profile.js.saveError'), 'error');
     return;
   }
 
@@ -505,7 +505,7 @@ form.addEventListener('submit', async event => {
 
   profile = normalizeCandidate(payload);
   populateForm(profile);
-  showToast('Tu perfil se guardó correctamente.', 'success');
+  showToast(t('profile.js.saveSuccess'), 'success');
 });
 
 loadProfile();
