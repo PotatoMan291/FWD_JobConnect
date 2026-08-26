@@ -9,6 +9,7 @@ import { initAccessibility } from '../../utils/accessibility.js';
 import { authService } from '../../services/auth-service.js';
 import { candidatosService } from '../../services/candidatos-service.js';
 import { normalizeCandidate } from '../../services/candidatos-service.js';
+import { openModal, closeModal } from '../../components/modal.js';
 import { showToast } from '../../components/toast.js';
 
 initTheme();
@@ -29,8 +30,20 @@ const cvFile = document.getElementById('cvFile');
 const cvStatus = document.getElementById('cv-status');
 const skillInput = document.getElementById('skill-input');
 const skillsList = document.getElementById('skills-list');
+
+// Elementos de Foto de Perfil
+const profileAvatarPreview = document.getElementById('profile-avatar-preview');
+const profilePhotoFileInput = document.getElementById('profile-photo-file');
+const openCameraBtn = document.getElementById('open-camera-btn');
+const removePhotoBtn = document.getElementById('remove-photo-btn');
+const photoStatusMsg = document.getElementById('photo-status-msg');
+
 let profile = normalizeCandidate(currentUser || {});
 let skills = [];
+let currentAvatarImage = profile.image || currentUser?.image || '';
+let cameraMediaStream = null;
+
+const DEFAULT_AVATAR = '/public/favicon.svg';
 
 const locations = {
   'Costa Rica': {
@@ -52,6 +65,63 @@ function setValue(id, value = '') {
   document.getElementById(id).value = value === 'No disponible' ? '' : value;
 }
 
+function updateAvatarUI(imageUrl) {
+  currentAvatarImage = imageUrl || '';
+  if (profileAvatarPreview) {
+    profileAvatarPreview.src = currentAvatarImage || DEFAULT_AVATAR;
+  }
+  if (removePhotoBtn) {
+    removePhotoBtn.style.display = currentAvatarImage && currentAvatarImage !== DEFAULT_AVATAR ? 'inline-flex' : 'none';
+  }
+  // Sincronizar en tiempo real el avatar del menú lateral
+  const sidebarAvatar = document.querySelector('.sidebar-user-avatar');
+  if (sidebarAvatar) {
+    sidebarAvatar.src = currentAvatarImage || DEFAULT_AVATAR;
+  }
+}
+
+/**
+ * Recorta y redimensiona una imagen cuadrada en un canvas
+ * para optimizar el tamaño en almacenamiento y red (max 360x360 px).
+ */
+function processImageToSquare(imgElement, size = 360) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  const srcWidth = imgElement.naturalWidth || imgElement.videoWidth || imgElement.width;
+  const srcHeight = imgElement.naturalHeight || imgElement.videoHeight || imgElement.height;
+  const minDim = Math.min(srcWidth, srcHeight);
+  const startX = (srcWidth - minDim) / 2;
+  const startY = (srcHeight - minDim) / 2;
+
+  ctx.drawImage(imgElement, startX, startY, minDim, minDim, 0, 0, size, size);
+  return canvas.toDataURL('image/jpeg', 0.88);
+}
+
+/**
+ * Captura un cuadro de video en espejo y lo recorta a cuadrado
+ */
+function captureVideoToSquare(videoElement, size = 360) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  const srcWidth = videoElement.videoWidth;
+  const srcHeight = videoElement.videoHeight;
+  const minDim = Math.min(srcWidth, srcHeight);
+  const startX = (srcWidth - minDim) / 2;
+  const startY = (srcHeight - minDim) / 2;
+
+  // Espejo horizontal para selfie natural
+  ctx.translate(size, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(videoElement, startX, startY, minDim, minDim, 0, 0, size, size);
+  return canvas.toDataURL('image/jpeg', 0.88);
+}
+
 function populateForm(candidate) {
   setValue('firstName', candidate.firstName);
   setValue('lastName', candidate.lastName);
@@ -68,6 +138,9 @@ function populateForm(candidate) {
   setValue('linkedinUrl', candidate.linkedinUrl);
   setValue('portfolioUrl', candidate.portfolioUrl);
   if (candidate.cvUrl) cvStatus.textContent = 'Ya tienes un currículum guardado. Selecciona otro para reemplazarlo.';
+
+  // Foto de perfil
+  updateAvatarUI(candidate.image || currentUser?.image || '');
 }
 
 function fillSelect(select, values, selectedValue, placeholder) {
@@ -107,6 +180,7 @@ document.getElementById('country').addEventListener('change', event => updateLoc
 document.getElementById('province').addEventListener('change', event => {
   updateLocationOptions(document.getElementById('country').value, event.target.value);
 });
+
 document.getElementById('add-skill-btn').addEventListener('click', () => {
   const value = skillInput.value.trim();
   if (value && !skills.some(skill => skill.toLowerCase() === value.toLowerCase())) {
@@ -116,6 +190,7 @@ document.getElementById('add-skill-btn').addEventListener('click', () => {
   }
   skillInput.focus();
 });
+
 skillInput.addEventListener('keydown', event => {
   if (event.key === 'Enter') {
     event.preventDefault();
@@ -123,6 +198,227 @@ skillInput.addEventListener('keydown', event => {
   }
 });
 
+// ==========================================
+// Manejo de Subida de Archivo de Foto
+// ==========================================
+profilePhotoFileInput?.addEventListener('change', async event => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    showToast('Por favor selecciona un archivo de imagen válido (JPG, PNG, WEBP).', 'error');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('La imagen no puede superar los 5 MB.', 'error');
+    return;
+  }
+
+  try {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const optimizedDataUrl = processImageToSquare(img, 360);
+        updateAvatarUI(optimizedDataUrl);
+        showToast('Foto cargada. Haz clic en "Guardar mi perfil" para confirmar.', 'success');
+      };
+      img.onerror = () => showToast('Error al procesar la imagen.', 'error');
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } catch (err) {
+    showToast('No se pudo cargar la imagen seleccionada.', 'error');
+  }
+});
+
+// ==========================================
+// Botón Eliminar Foto Personalizada
+// ==========================================
+removePhotoBtn?.addEventListener('click', () => {
+  updateAvatarUI('');
+  if (profilePhotoFileInput) profilePhotoFileInput.value = '';
+  showToast('Foto eliminada. Guarda los cambios para confirmar.', 'info');
+});
+
+// ==========================================
+// Modal y Captura con Cámara Web
+// ==========================================
+function stopCameraStream() {
+  if (cameraMediaStream) {
+    cameraMediaStream.getTracks().forEach(track => {
+      try {
+        track.stop();
+      } catch (e) {
+        // stream already closed
+      }
+    });
+    cameraMediaStream = null;
+  }
+}
+
+async function openCameraModal() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('Tu navegador o dispositivo no soporta acceso directo a la cámara.', 'error');
+    return;
+  }
+
+  const modalBody = `
+    <div class="camera-modal-wrapper">
+      <div class="camera-preview-box">
+        <video id="camera-video" class="camera-video-elem" autoplay playsinline muted></video>
+        <img id="camera-snapshot-img" class="camera-snapshot-elem" style="display: none;" alt="Captura de cámara">
+        <div id="camera-viewfinder" class="camera-viewfinder-guide"></div>
+        <div id="camera-status" class="camera-status-indicator">
+          <span class="camera-status-dot"></span>
+          <span>En vivo</span>
+        </div>
+      </div>
+      <p id="camera-hint" style="font-size: var(--fs-small); color: var(--color-ink-muted); text-align: center; margin: 0;">
+        Centra tu rostro dentro del círculo guía y presiona <strong>Capturar foto</strong>.
+      </p>
+      <div id="camera-error-container" style="display: none;" class="camera-error-message"></div>
+    </div>
+  `;
+
+  const modalFooter = `
+    <div class="camera-actions-toolbar">
+      <button type="button" id="camera-cancel-btn" class="btn btn-secondary">Cancelar</button>
+      <button type="button" id="camera-capture-btn" class="btn btn-shutter" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+        <span>Capturar foto</span>
+      </button>
+      <button type="button" id="camera-retake-btn" class="btn btn-secondary" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <span>Tomar otra</span>
+      </button>
+      <button type="button" id="camera-confirm-btn" class="btn btn-primary" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Usar esta foto</span>
+      </button>
+    </div>
+  `;
+
+  openModal({
+    title: 'Tomar foto con la cámara',
+    bodyHTML: modalBody,
+    footerHTML: modalFooter,
+    onClose: () => {
+      stopCameraStream();
+    }
+  });
+
+  const video = document.getElementById('camera-video');
+  const snapshotImg = document.getElementById('camera-snapshot-img');
+  const viewfinder = document.getElementById('camera-viewfinder');
+  const statusIndicator = document.getElementById('camera-status');
+  const hintText = document.getElementById('camera-hint');
+  const errorContainer = document.getElementById('camera-error-container');
+  const captureBtn = document.getElementById('camera-capture-btn');
+  const retakeBtn = document.getElementById('camera-retake-btn');
+  const confirmBtn = document.getElementById('camera-confirm-btn');
+  const cancelBtn = document.getElementById('camera-cancel-btn');
+
+  cancelBtn?.addEventListener('click', () => {
+    stopCameraStream();
+    closeModal();
+  });
+
+  let capturedDataUrl = null;
+
+  try {
+    cameraMediaStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'user',
+        width: { ideal: 640 },
+        height: { ideal: 640 }
+      },
+      audio: false
+    });
+
+    if (video) {
+      video.srcObject = cameraMediaStream;
+      video.onloadedmetadata = () => {
+        video.play();
+        if (captureBtn) captureBtn.disabled = false;
+      };
+    }
+  } catch (err) {
+    if (errorContainer) {
+      errorContainer.style.display = 'block';
+      let msg = 'No se pudo acceder a la cámara. ';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg += 'Permiso denegado por el navegador. Habilita los permisos de cámara e intenta de nuevo.';
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        msg += 'No se encontró ningún dispositivo de cámara conectado.';
+      } else {
+        msg += (err.message || 'Verifica que tu cámara no esté en uso por otra aplicación.');
+      }
+      errorContainer.textContent = msg;
+    }
+    if (hintText) hintText.style.display = 'none';
+    if (statusIndicator) statusIndicator.style.display = 'none';
+    if (captureBtn) captureBtn.style.display = 'none';
+    return;
+  }
+
+  // Capturar Fotografía
+  captureBtn?.addEventListener('click', () => {
+    if (!video || video.videoWidth === 0) return;
+
+    capturedDataUrl = captureVideoToSquare(video, 360);
+
+    if (snapshotImg) {
+      snapshotImg.src = capturedDataUrl;
+      snapshotImg.style.display = 'block';
+    }
+    if (video) video.style.display = 'none';
+    if (viewfinder) viewfinder.style.display = 'none';
+    if (statusIndicator) statusIndicator.style.display = 'none';
+
+    if (hintText) {
+      hintText.innerHTML = '¿Te gusta cómo quedó tu foto? Puedes aceptarla o intentar otra toma.';
+    }
+
+    if (captureBtn) captureBtn.style.display = 'none';
+    if (retakeBtn) retakeBtn.style.display = 'inline-flex';
+    if (confirmBtn) confirmBtn.style.display = 'inline-flex';
+  });
+
+  // Tomar otra
+  retakeBtn?.addEventListener('click', () => {
+    capturedDataUrl = null;
+    if (snapshotImg) snapshotImg.style.display = 'none';
+    if (video) video.style.display = 'block';
+    if (viewfinder) viewfinder.style.display = 'flex';
+    if (statusIndicator) statusIndicator.style.display = 'inline-flex';
+
+    if (hintText) {
+      hintText.innerHTML = 'Centra tu rostro dentro del círculo guía y presiona <strong>Capturar foto</strong>.';
+    }
+
+    if (captureBtn) captureBtn.style.display = 'inline-flex';
+    if (retakeBtn) retakeBtn.style.display = 'none';
+    if (confirmBtn) confirmBtn.style.display = 'none';
+  });
+
+  // Confirmar y Usar foto
+  confirmBtn?.addEventListener('click', () => {
+    if (capturedDataUrl) {
+      updateAvatarUI(capturedDataUrl);
+      showToast('¡Foto tomada con éxito! Haz clic en "Guardar mi perfil" para confirmar.', 'success');
+    }
+    stopCameraStream();
+    closeModal();
+  });
+}
+
+openCameraBtn?.addEventListener('click', openCameraModal);
+
+// ==========================================
+// Cargar Datos del Perfil
+// ==========================================
 async function loadProfile() {
   if (!currentUser?.id) return;
   const result = await candidatosService.getById(currentUser.id);
@@ -139,6 +435,9 @@ function readFile(file) {
   });
 }
 
+// ==========================================
+// Guardar Perfil
+// ==========================================
 form.addEventListener('submit', async event => {
   event.preventDefault();
   const file = cvFile.files[0];
@@ -160,6 +459,7 @@ form.addEventListener('submit', async event => {
   const payload = {
     ...profile,
     id: currentUser.id,
+    image: currentAvatarImage || '',
     firstName: document.getElementById('firstName').value.trim(),
     lastName: document.getElementById('lastName').value.trim(),
     professionalTitle: document.getElementById('professionalTitle').value.trim(),
@@ -186,11 +486,27 @@ form.addEventListener('submit', async event => {
 
   const updatedUser = { ...currentUser, ...payload };
   delete updatedUser.password;
+
+  // Actualizar sesión persistente
   const session = JSON.parse(localStorage.getItem('jobconnect_session') || '{}');
   localStorage.setItem('jobconnect_session', JSON.stringify({ ...session, user: updatedUser }));
+
+  // Actualizar en registered_users si existe
+  try {
+    const regUsers = JSON.parse(localStorage.getItem('jobconnect_registered_users') || '[]');
+    const regIdx = regUsers.findIndex(u => String(u.id) === String(currentUser.id) || u.username === currentUser.username);
+    if (regIdx !== -1) {
+      regUsers[regIdx] = { ...regUsers[regIdx], ...updatedUser };
+      localStorage.setItem('jobconnect_registered_users', JSON.stringify(regUsers));
+    }
+  } catch (e) {
+    // Ignorar si no existe
+  }
+
   profile = normalizeCandidate(payload);
   populateForm(profile);
   showToast('Tu perfil se guardó correctamente.', 'success');
 });
 
 loadProfile();
+

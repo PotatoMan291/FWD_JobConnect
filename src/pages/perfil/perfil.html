@@ -38,6 +38,38 @@
         </section>
         <section class="form-card" style="max-width: 900px; margin: var(--space-6) auto;">
           <form id="profile-form">
+            <!-- Sección de Foto de Perfil -->
+            <div class="profile-photo-card">
+              <div class="profile-photo-avatar-wrapper">
+                <img id="profile-avatar-preview" class="profile-avatar-preview-img" src="/public/favicon.svg" alt="Foto de perfil">
+                <div class="profile-avatar-overlay-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+              </div>
+              <div class="profile-photo-details">
+                <h3 class="profile-photo-title">Foto de perfil</h3>
+                <p class="profile-photo-desc">Personaliza tu imagen para que reclutadores y empresas te reconozcan fácilmente.</p>
+                <div class="profile-photo-actions">
+                  <label for="profile-photo-file" class="btn btn-secondary btn-file-trigger" tabindex="0" role="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Subir foto</span>
+                  </label>
+                  <input type="file" id="profile-photo-file" accept="image/png, image/jpeg, image/webp, image/gif" style="display: none;">
+
+                  <button type="button" id="open-camera-btn" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Tomar foto con cámara</span>
+                  </button>
+
+                  <button type="button" id="remove-photo-btn" class="btn btn-danger btn-photo-remove" style="display: none;" title="Eliminar foto personalizada">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <span>Eliminar</span>
+                  </button>
+                </div>
+                <small id="photo-status-msg" class="profile-photo-hint">Formatos: JPG, PNG o WEBP. Puedes tomar una foto en vivo o elegir una imagen.</small>
+              </div>
+            </div>
+
             <div class="form-grid-2">
               <div class="form-group"><label for="firstName">Nombre</label><input id="firstName" class="input" required></div>
               <div class="form-group"><label for="lastName">Apellidos</label><input id="lastName" class="input" required></div>

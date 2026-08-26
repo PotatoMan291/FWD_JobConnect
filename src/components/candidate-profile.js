@@ -15,10 +15,13 @@ function escapeHTML(value) {
 }
 
 function isSafeUrl(url, allowedHosts = []) {
-  if (allowedHosts.length === 0 && /^data:application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document);base64,/i.test(String(url || ''))) return true;
+  if (!url) return false;
+  const strUrl = String(url).trim();
+  if (allowedHosts.length === 0 && /^data:(application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)|image\/(png|jpeg|jpg|webp|gif|svg\+xml));base64,/i.test(strUrl)) return true;
+  if (strUrl.startsWith('/') && !strUrl.startsWith('//')) return true;
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'https:' && (allowedHosts.length === 0 || allowedHosts.some(host => parsed.hostname === host || parsed.hostname.endsWith(`.${host}`)));
+    const parsed = new URL(strUrl, window.location.origin);
+    return (parsed.protocol === 'https:' || parsed.protocol === 'http:') && (allowedHosts.length === 0 || allowedHosts.some(host => parsed.hostname === host || parsed.hostname.endsWith(`.${host}`)));
   } catch {
     return false;
   }
